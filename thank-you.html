@@ -3,21 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You - Ziobunc Telemedicine</title>
+    <title>Appointment Booked - Ziobunc Telemedicine</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: #f4f7fc; display: flex; justify-content: center; align-items: center; height: 100vh; }
         .container { max-width: 500px; width: 100%; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+        .icon { font-size: 60px; color: #28a745; margin-bottom: 10px; }
         h1 { color: #28a745; margin-bottom: 10px; }
         p { color: #555; margin-bottom: 20px; }
+        .video-btn { display: inline-block; background: #007bff; color: white; padding: 12px 24px; border-radius: 30px; text-decoration: none; margin-top: 10px; font-weight: bold; }
+        .video-btn:hover { background: #0056b3; }
         a { color: #007bff; text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>✅ Appointment Booked!</h1>
+        <div class="icon">✅</div>
+        <h1>Appointment Booked!</h1>
         <p>Your consultation has been scheduled. A confirmation will be sent to your email and phone shortly.</p>
-        <p><a href="https://ziobunctelemedicineng.vercel.app">← Return to Home</a></p>
+        <p style="font-size: 14px; color: #888;">When it's time for your appointment, click the button below to join your doctor.</p>
+        <a href="video-call.html" class="video-btn">📹 Join Video Call</a>
+        <p style="margin-top: 20px;"><a href="https://ziobunctelemedicineng.vercel.app">← Return to Home</a></p>
     </div>
 </body>
 </html>
