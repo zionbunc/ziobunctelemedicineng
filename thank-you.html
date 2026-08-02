@@ -7,23 +7,66 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: #f4f7fc; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .container { max-width: 500px; width: 100%; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+        .container { max-width: 600px; width: 100%; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
         .icon { font-size: 60px; color: #28a745; margin-bottom: 10px; }
         h1 { color: #28a745; margin-bottom: 10px; }
         p { color: #555; margin-bottom: 20px; }
+        
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        
+        .action-btn { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; border: 2px solid #eee;
+            transition: 0.3s; color: #333; background: #f9f9f9;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .action-btn.email { border-color: #007bff; }
+        .action-btn.email:hover { background: #e7f3ff; }
+        .action-btn.whatsapp { border-color: #25D366; }
+        .action-btn.whatsapp:hover { background: #e5f9ee; }
+        
         .video-btn { display: inline-block; background: #007bff; color: white; padding: 12px 24px; border-radius: 30px; text-decoration: none; margin-top: 10px; font-weight: bold; }
         .video-btn:hover { background: #0056b3; }
         a { color: #007bff; text-decoration: none; }
+        
+        @media (max-width: 500px) {
+            .action-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="icon">✅</div>
         <h1>Appointment Booked!</h1>
-        <p>Your consultation has been scheduled. A confirmation will be sent to your email and phone shortly.</p>
-        <p style="font-size: 14px; color: #888;">When it's time for your appointment, click the button below to join your doctor.</p>
+        <p>Your consultation has been scheduled. A confirmation has been sent to the admin.</p>
+        <p style="font-size: 14px; color: #888;">Please confirm your booking by sending a notification below.</p>
+
+        <div class="action-grid">
+            <!-- Email Button to Admin -->
+            <a href="mailto:ziobuncenterprise@gmail.com?subject=Ziobunc%20Appointment%20Confirmation&body=Hello%20Admin,%0A%0AMy%20name%20is%20[Your%20Name]%20and%20I%20have%20booked%20a%20consultation.%0A%0APlease%20confirm%20my%20appointment.%0A%0AThank%20you." class="action-btn email">
+                <span style="font-size: 24px;">📧</span>
+                Email Admin
+            </a>
+
+            <!-- WhatsApp Button to Admin -->
+            <a href="https://wa.me/2348068856864?text=Hello%20Admin,%20I%20have%20booked%20a%20consultation%20with%20Ziobunc%20Telemedicine.%20Please%20confirm%20my%20appointment." class="action-btn whatsapp">
+                <span style="font-size: 24px;">💬</span>
+                WhatsApp Admin
+            </a>
+        </div>
+
+        <p style="font-size: 14px; color: #888; margin-top: 15px;">When it's time for your appointment, click below to join your doctor.</p>
         <a href="video-call.html" class="video-btn">📹 Join Video Call</a>
         <p style="margin-top: 20px;"><a href="https://ziobunctelemedicineng.vercel.app">← Return to Home</a></p>
     </div>
+
+    <script>
+        // Simple script to grab the booking info from the URL if needed
+        const urlParams = new URLSearchParams(window.location.search);
+        const doctor = urlParams.get('doctor');
+        if(doctor) {
+            document.getElementById('displayDoctor').textContent = doctor;
+        }
+    </script>
 </body>
 </html>
