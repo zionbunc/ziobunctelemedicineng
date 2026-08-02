@@ -12,7 +12,9 @@ app.get('/', (req, res) => {
 app.post('/api/book', (req, res) => {
     console.log('✅ Booking received:', req.body);
     
-    // THIS IS THE FIX: Send the patient to your live success URL
+    // In the next step, we will add EMAIL code here!
+    
+    // Redirect to the thank you page
     res.redirect('https://ziobunctelemedicineng.vercel.app/thank-you.html');
 });
 
