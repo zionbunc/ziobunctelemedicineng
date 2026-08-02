@@ -11,10 +11,6 @@
         h1 { color: #1a2b4c; margin-bottom: 20px; text-align: center; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
         input, select, button { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
-        .pay-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .pay-btn { flex: 1; background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 6px; cursor: pointer; text-align: center; }
-        .pay-btn:hover { background: #e9ecef; }
-        .pay-btn.selected { border: 2px solid #28a745; background: #e8f5e9; }
         #submit-btn { background: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; }
         #submit-btn:hover { background: #218838; }
         .back-link { display: block; text-align: center; margin-top: 15px; color: #007bff; text-decoration: none; }
@@ -23,7 +19,6 @@
         .thank-you h2 { color: #28a745; margin-bottom: 10px; }
         .admin-link { text-align: center; margin-top: 20px; font-size: 14px; }
         .admin-link a { color: #666; text-decoration: none; }
-        .error-msg { color: red; text-align: center; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
@@ -31,6 +26,7 @@
         <div id="booking-form">
             <h1>Book a Consultation</h1>
             
+            <!-- This form sends data directly to your live Render backend -->
             <form id="appointmentForm" action="https://ziobunc-backend.onrender.com/api/book" method="POST">
                 <label>Full Name</label>
                 <input type="text" name="fullName" id="fullName" placeholder="Enter your full name" required>
@@ -58,17 +54,6 @@
                     <option>Text Chat</option>
                 </select>
 
-                <label>Choose Payment Method</label>
-                <div class="pay-buttons">
-                    <div class="pay-btn" onclick="selectPayment(this, 'Paystack')">Paystack</div>
-                    <div class="pay-btn" onclick="selectPayment(this, 'Stripe')">Stripe</div>
-                    <div class="pay-btn" onclick="selectPayment(this, 'Opay')">Opay</div>
-                    <div class="pay-btn" onclick="selectPayment(this, 'Moniepoint')">Moniepoint</div>
-                </div>
-                <input type="hidden" name="paymentMethod" id="paymentMethod" value="">
-
-                <div id="error-msg" class="error-msg">Please select a payment method.</div>
-
                 <button type="submit" id="submit-btn">Book Appointment</button>
             </form>
             <a href="index.html" class="back-link">← Back to Home</a>
@@ -77,18 +62,9 @@
 
         <div id="thank-you" class="hidden thank-you">
             <h2>✅ Appointment Booked Successfully!</h2>
-            <p id="success-message">Your consultation has been scheduled. You will receive a confirmation shortly.</p>
+            <p>Your consultation has been scheduled. You will receive a confirmation shortly.</p>
             <a href="index.html" class="back-link" style="margin-top: 30px;">← Go back to Home</a>
         </div>
     </div>
-
-    <script>
-        function selectPayment(element, method) {
-            document.querySelectorAll('.pay-btn').forEach(btn => btn.classList.remove('selected'));
-            element.classList.add('selected');
-            document.getElementById('paymentMethod').value = method;
-            document.getElementById('error-msg').style.display = 'none';
-        }
-    </script>
 </body>
 </html>
