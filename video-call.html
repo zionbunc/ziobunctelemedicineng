@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Consultation - Ziobunc</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #1a1a1a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        .video-box { width: 80%; max-width: 800px; height: 450px; background: #2d2d2d; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; border: 1px solid #444; }
+        .controls { margin-top: 20px; display: flex; gap: 15px; }
+        .control-btn { padding: 10px 20px; border: none; border-radius: 30px; background: #28a745; color: white; cursor: pointer; }
+        .control-btn.end { background: #dc3545; }
+        .back-link { margin-top: 20px; color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1 style="margin-bottom: 20px;">🩺 Live Consultation</h1>
+    <div class="video-box">Video Feed Loading...</div>
+    <div class="controls">
+        <button class="control-btn">🎤 Mic On</button>
+        <button class="control-btn">📷 Camera On</button>
+        <button class="control-btn end">📞 End Call</button>
+    </div>
+    <a href="index.html" class="back-link">← Return to Home</a>
+</body>
+</html>
