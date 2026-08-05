@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// CONNECT TO CLOUD MONGODB
+// CONNECT TO CLOUD MONGODB (FIXED PASSWORD)
 mongoose.connect('mongodb+srv://bunmail_db_user:udMUODyy3lrtQ5GQ@cluster0.ahwssg3.mongodb.net/ziobuncTelemedicine?retryWrites=true&w=majority&appName=Cluster0')
 .then(() => {
     console.log('✅ Connected to MongoDB Cloud Database');
@@ -36,7 +36,7 @@ const bookingSchema = new mongoose.Schema({
 });
 const Booking = mongoose.model('Booking', bookingSchema);
 
-// SEED DATABASE WITH DOCTORS
+// SEED DATABASE
 async function seedDoctors() {
     try {
         const count = await Doctor.countDocuments();
@@ -54,7 +54,7 @@ async function seedDoctors() {
 }
 seedDoctors();
 
-// SAVE BOOKING TO CLOUD
+// SAVE BOOKING
 app.post('/api/book', async (req, res) => {
     try {
         const { fullName, email, phone, doctor, datetime, type } = req.body;
