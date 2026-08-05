@@ -7,8 +7,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// CONNECT TO CLOUD MONGODB (FIXED PASSWORD)
-mongoose.connect('mongodb+srv://bunmail_db_user:udMUODyy3lrtQ5GQ@cluster0.ahwssg3.mongodb.net/ziobuncTelemedicine?retryWrites=true&w=majority&appName=Cluster0')
+// CONNECT TO CLOUD MONGODB (Using Environment Variable for safety)
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://bunmail_db_user:udMUODyy3lrtQ5GQ@cluster0.ahwssg3.mongodb.net/ziobuncTelemedicine?retryWrites=true&w=majority&appName=Cluster0';
+
+mongoose.connect(MONGODB_URI)
 .then(() => {
     console.log('✅ Connected to MongoDB Cloud Database');
 })
