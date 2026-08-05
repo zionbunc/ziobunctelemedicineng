@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - Ziobunc Telemedicine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f4f7fc; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: #1a2b4c; margin-bottom: 20px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        tr:hover { background-color: #f1f1f1; }
+        .back-link { display: block; text-align: center; margin-top: 30px; }
+        .back-link a { color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🩺 Doctor Dashboard</h1>
+        <p style="text-align: center; color: #666;">Welcome, Dr. Adewale. Here are your upcoming appointments.</p>
+        
+        <table id="appointmentsTable">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Doctor</th>
+                    <th>Date & Time</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody id="appointmentsBody">
+                <!-- Data will be loaded here -->
+            </tbody>
+        </table>
+        
+        <div class="back-link"><a href="index.html">← Back to Home</a></div>
+    </div>
+
+    <script>
+        // Function to fetch bookings from the backend API
+        async function loadBookings() {
+            try {
+                const response = await fetch('http://localhost:3000/api/bookings');
+                const bookings = await response.json();
+                
+                const tbody = document.getElementById('appointmentsBody');
+                tbody.innerHTML = '';
+                
+                bookings.forEach(b => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${b.fullName}</td>
+                        <td>${b.email}</td>
+                        <td>${b.phone}</td>
+                        <td>${b.doctor}</td>
+                        <td>${new Date(b.datetime).toLocaleString()}</td>
+                        <td>${b.type}</td>
+                    `;
+                });
+            } catch (err) {
+                console.error('Error loading bookings:', err);
+                document.getElementById('appointmentsBody').innerHTML = 
+                    '<tr><td colspan="6" style="text-align:center; color:red;">Failed to load appointments. Is the server running?</td></tr>';
+            }
+        }
+        
+        // Load bookings when page opens
+        loadBookings();
+    </script>
+</body>
+</html>
