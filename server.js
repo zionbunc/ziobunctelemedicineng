@@ -2,15 +2,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000; // Updated for Render
+const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// CONNECT TO MONGODB
-mongoose.connect('mongodb://127.0.0.1:27017/ziobuncTelemedicine')
+// CONNECT TO CLOUD MONGODB
+mongoose.connect('mongodb+srv://bunmail_db_user:udMUODyy3lrtQ5GQ@cluster0.ahwssg3.mongodb.net/ziobuncTelemedicine?retryWrites=true&w=majority&appName=Cluster0')
 .then(() => {
-    console.log('✅ Connected to MongoDB Database');
+    console.log('✅ Connected to MongoDB Cloud Database');
 })
 .catch((err) => {
     console.error('❌ MongoDB Connection Error:', err);
@@ -36,7 +36,7 @@ const bookingSchema = new mongoose.Schema({
 });
 const Booking = mongoose.model('Booking', bookingSchema);
 
-// SEED DATABASE
+// SEED DATABASE WITH DOCTORS
 async function seedDoctors() {
     try {
         const count = await Doctor.countDocuments();
@@ -46,7 +46,7 @@ async function seedDoctors() {
                 { name: 'Dr. Chioma', specialty: 'Pediatrics', available: true },
                 { name: 'Dr. Emeka', specialty: 'Dermatology', available: false }
             ]);
-            console.log('✅ Sample doctors added to database');
+            console.log('✅ Sample doctors added to cloud database');
         }
     } catch (err) {
         console.error('❌ Error seeding doctors:', err);
@@ -54,13 +54,13 @@ async function seedDoctors() {
 }
 seedDoctors();
 
-// SAVE BOOKING
+// SAVE BOOKING TO CLOUD
 app.post('/api/book', async (req, res) => {
     try {
         const { fullName, email, phone, doctor, datetime, type } = req.body;
         const newBooking = new Booking({ fullName, email, phone, doctor, datetime, type });
         await newBooking.save();
-        console.log('✅ Booking SAVED TO DATABASE:', newBooking);
+        console.log('✅ Booking SAVED TO CLOUD:', newBooking);
         res.redirect('https://ziobunctelemedicineng.vercel.app/thank-you.html');
     } catch (err) {
         console.error('❌ Error saving booking:', err);
@@ -84,7 +84,7 @@ app.get('/dashboard', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('Ziobunc Backend is running!');
+    res.send('Ziobunc Backend is running on Cloud!');
 });
 
 app.listen(PORT, () => {
