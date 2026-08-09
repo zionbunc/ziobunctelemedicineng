@@ -86,6 +86,16 @@
         body.dark-mode .step-card h3 { color: #ffffff; }
         .step-card p { color: #555; font-size: 14px; }
         body.dark-mode .step-card p { color: #aaaaaa; }
+
+        /* DIFFERENTIATION STYLES */
+        .feature-box.clickable { border: 2px solid transparent; }
+        .feature-box.clickable:hover { border-color: #007bff; }
+        .feature-box.informational { border: 2px solid #ffc107; background: var(--card-bg); }
+        .feature-box.informational h3 { color: #d4a017; }
+        .feature-box.informational .badge { background: #ffc107; color: #1a2b4c; padding: 2px 10px; border-radius: 12px; font-size: 10px; font-weight: bold; display: inline-block; margin-bottom: 8px; }
+        .status-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; }
+        .dot-green { background-color: #28a745; }
+        .dot-red { background-color: #dc3545; }
     </style>
 </head>
 <body>
@@ -149,28 +159,34 @@
 
         <h2 class="section-title">Our Capabilities</h2>
         <div class="features">
-            <a href="room.html?room=test" class="feature-link feature-box">
+            <!-- CLICKABLE CARDS -->
+            <a href="room.html?room=test" class="feature-link feature-box clickable">
                 <h3>📹 Video/Audio Calls</h3>
                 <p>Face-to-face or voice consultations from your home.</p>
             </a>
-            <div class="feature-box">
-                <h3>✅ Certified Professionals</h3>
-                <p>Trusted and qualified public health advocate &amp; pharmacy technician ready to assist you.</p>
-            </div>
-            <a href="https://ziobunc-backend.onrender.com/dashboard" class="feature-link feature-box">
+            <a href="https://ziobunc-backend.onrender.com/dashboard" class="feature-link feature-box clickable">
                 <h3>📄 Digital Prescriptions</h3>
                 <p>E-Prescriptions sent via PDF or QR code instantly.</p>
             </a>
-            <a href="symptom-checker.html" class="feature-link feature-box">
+            <a href="symptom-checker.html" class="feature-link feature-box clickable">
                 <h3>🤖 AI Symptom Checker</h3>
                 <p>Smart pre-triage before you book a consultation.</p>
             </a>
-            <div class="feature-box">
+
+            <!-- INFORMATIONAL CARDS (GOLD BORDER) -->
+            <div class="feature-box informational">
+                <span class="badge">✦ Differentiator</span>
+                <h3>✅ Certified Professionals</h3>
+                <p>Trusted and qualified public health advocate &amp; pharmacy technician ready to assist you.</p>
+            </div>
+            <div class="feature-box informational">
+                <span class="badge">✦ Differentiator</span>
                 <h3>👤 Guest Mode</h3>
                 <p>Book instantly without creating an account.</p>
             </div>
-            <div class="feature-box">
-                <h3>🟢 Live Availability</h3>
+            <div class="feature-box informational" id="availabilityCard">
+                <span class="badge">✦ Differentiator</span>
+                <h3 id="availabilityTitle">🟢 Live Availability</h3>
                 <p>See real-time status of our available professionals before booking.</p>
             </div>
         </div>
@@ -233,6 +249,26 @@
             const icon = element.querySelector('.faq-icon');
             icon.textContent = element.classList.contains('active') ? '-' : '+';
         }
+
+        // RESTORE LIVE AVAILABILITY
+        async function loadAvailability() {
+            try {
+                const res = await fetch('https://ziobunc-backend.onrender.com/api/doctors');
+                const doctors = await res.json();
+                // Find the first doctor (Babatunde's profile)
+                if (doctors.length > 0) {
+                    const doc = doctors[0];
+                    const title = document.getElementById('availabilityTitle');
+                    const dotClass = doc.available ? 'dot-green' : 'dot-red';
+                    const statusText = doc.available ? 'Available' : 'Busy';
+                    title.innerHTML = `<span class="status-dot ${dotClass}"></span> Live Availability (${statusText})`;
+                }
+            } catch (err) {
+                // Silently fail if the backend is not available
+            }
+        }
+
+        loadAvailability();
     </script>
 </body>
 </html>
