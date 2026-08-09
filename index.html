@@ -55,12 +55,25 @@
         .nav-link { text-decoration: none; color: var(--text-color); font-weight: 500; }
         body.dark-mode .nav-link { color: #e0e0e0; }
 
-        /* Doctor List Styles */
         .doctor-list { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
         .doctor-card { background: var(--card-bg); padding: 15px; border-radius: 8px; box-shadow: var(--shadow); text-align: center; border: 1px solid #eee; }
         .status-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; }
         .dot-green { background-color: #28a745; }
         .dot-red { background-color: #dc3545; }
+
+        /* FAQ Styles */
+        .faq-section { padding: 40px 0; max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--card-bg); padding: 15px 20px; margin-bottom: 10px; border-radius: 8px; box-shadow: var(--shadow); cursor: pointer; }
+        .faq-question { font-weight: bold; display: flex; justify-content: space-between; align-items: center; color: var(--text-color); }
+        .faq-answer { display: none; padding-top: 10px; color: #555; font-size: 14px; line-height: 1.5; }
+        body.dark-mode .faq-answer { color: #aaaaaa; }
+        .faq-item.active .faq-answer { display: block; }
+        .faq-icon { font-size: 20px; }
+
+        /* Support Section in Footer */
+        .footer-support { margin-top: 20px; font-size: 14px; line-height: 1.8; }
+        .footer-support a { color: #4facfe; text-decoration: none; }
+        .footer-support a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -69,7 +82,6 @@
             <div class="logo">Ziobunc Telemedicine</div>
             <div class="nav-links">
                 <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
-                <a href="https://ziobunc-backend.onrender.com/dashboard" class="nav-link">Doctor Login</a>
                 <a href="book.html" class="btn">Book a Doctor</a>
             </div>
         </div>
@@ -78,7 +90,7 @@
     <div class="container">
         <div class="hero">
             <h1>Top-Notch Healthcare, Anywhere.</h1>
-            <p>Connect with verified doctors via video, audio, or chat instantly. Global payments accepted.</p>
+            <p>Connect with verified doctors via video, audio, or chat instantly. Secure payments via WhatsApp.</p>
             <a href="book.html" class="cta-btn">Get Started Now</a>
         </div>
 
@@ -93,12 +105,34 @@
             <div class="feature-box"><h3>Verified Doctors</h3><p>Only licensed and trusted professionals globally.</p></div>
             <div class="feature-box"><h3>Digital Prescriptions</h3><p>E-Prescriptions sent via PDF or QR code instantly.</p></div>
             <div class="feature-box"><h3>AI Symptom Checker</h3><p>Smart pre-triage before you book a doctor.</p></div>
-            <div class="feature-box"><h3>Multi-Language</h3><p>English, French, Hausa, and Yoruba support.</p></div>
-            <div class="feature-box"><h3>Emergency SOS</h3><p>Fast-track booking for urgent medical needs.</p></div>
             <div class="feature-box"><h3>Guest Mode</h3><p>Book instantly without creating an account.</p></div>
-            <div class="feature-box"><h3>Referral System</h3><p>Invite friends and earn discounts.</p></div>
             <div class="feature-box"><h3>Doctor Availability</h3><p>See live green status before booking.</p></div>
-            <div class="feature-box"><h3>EHR History</h3><p>Access your past health records.</p></div>
+            <div class="feature-box"><h3>EHR History</h3><p>Access your past health records securely.</p></div>
+        </div>
+
+        <!-- FAQ Section -->
+        <h2 class="section-title" style="margin-top: 60px;">Frequently Asked Questions</h2>
+        <div class="faq-section">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">How do I book a consultation? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Simply click "Book a Doctor", fill in your details, select your preferred doctor and time, and confirm your appointment.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">What payment methods do you accept? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">After booking, you will receive a WhatsApp link to complete your payment securely. We accept Opay, Moniepoint, and Bank Transfers.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">Do I need an account to book? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">No! We offer Guest Mode. You can book instantly without creating an account or password.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">What languages do you support? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">We currently offer consultations in English, French, Hausa, and Yoruba. Please indicate your preference when booking.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">How do I upload my prescription? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">After your appointment, visit the "Thank You" page and click the "Upload Prescription" button to send it via email.</div>
+            </div>
         </div>
     </div>
 
@@ -106,10 +140,21 @@
         <div class="container">
             <p>&copy; 2026 Ziobunc Telemedicine. All rights reserved.</p>
             <p>Global healthcare, trusted by you.</p>
+            
+            <div class="footer-support">
+                <strong>📞 Customer Service:</strong> 
+                <a href="tel:08068856864">08068856864</a> | 
+                <a href="tel:07068875355">07068875355</a><br>
+                <strong>📧 Support Email:</strong> 
+                <a href="mailto:bunmait@gmail.com">bunmait@gmail.com</a><br>
+                <strong>🔒 Admin:</strong> 
+                <a href="https://ziobunc-backend.onrender.com/dashboard">Doctor Login</a>
+            </div>
         </div>
     </footer>
 
     <script>
+        // Theme Toggle
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const btn = document.querySelector('.theme-toggle');
@@ -120,7 +165,14 @@
             }
         }
 
-        // Load Doctors with Live Status for Patients
+        // FAQ Toggle
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+            const icon = element.querySelector('.faq-icon');
+            icon.textContent = element.classList.contains('active') ? '-' : '+';
+        }
+
+        // Load Doctors
         async function loadDoctorsForPatients() {
             try {
                 const res = await fetch('https://ziobunc-backend.onrender.com/api/doctors');
