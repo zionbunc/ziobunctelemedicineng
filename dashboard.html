@@ -21,8 +21,9 @@
         .avail-btn.busy { background: #dc3545; }
         .record-btn { background: #17a2b8; color: white; padding: 5px 12px; border-radius: 20px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; }
         .record-btn:hover { background: #138496; }
+        .room-btn { background: #6f42c1; color: white; padding: 5px 12px; border-radius: 20px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; margin-left: 5px; }
+        .room-btn:hover { background: #5a32a3; }
 
-        /* Modal Styles */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
         .modal-content { background-color: white; margin: 10% auto; padding: 30px; border-radius: 12px; width: 80%; max-width: 600px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
         .close-btn { float: right; font-size: 24px; font-weight: bold; cursor: pointer; color: #aaa; }
@@ -83,6 +84,20 @@
         </div>
     </div>
 
+    <!-- Room Link Modal -->
+    <div id="roomModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeRoomModal()">&times;</span>
+            <h2 style="color: #6f42c1;">🔗 Consultation Room Link</h2>
+            <p style="color: #555;">Send this link to the patient via WhatsApp.</p>
+            <div id="roomLinkContent" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; word-break: break-all;">
+                <span id="roomLinkText">Generating...</span>
+            </div>
+            <button onclick="copyRoomLink()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; margin-right: 10px;">📋 Copy Link</button>
+            <a id="roomLinkAnchor" href="#" target="_blank" style="background: #007bff; color: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; display: inline-block;">🚀 Open Room</a>
+        </div>
+    </div>
+
     <script>
         // Load Doctors
         async function loadDoctors() {
@@ -119,7 +134,7 @@
             }
         }
 
-        // Load Appointments with Records Button
+        // Load Appointments with Actions
         async function loadBookings() {
             try {
                 const response = await fetch('https://ziobunc-backend.onrender.com/api/bookings');
@@ -136,6 +151,7 @@
                         <td>${new Date(b.datetime).toLocaleString()}</td>
                         <td>${b.type}</td>
                         <td>
+                            <button class="room-btn" onclick="generateRoom('${b._id}')">🔗 Generate Room</button>
                             <a class="rx-btn" onclick="createPrescription('${b.fullName}', '${b.email}')">📄 Prescribe</a>
                             <button class="record-btn" onclick="viewRecords('${b.email}')">📂 Records</button>
                         </td>
@@ -148,7 +164,38 @@
             }
         }
 
-        // View Patient Records (Secure)
+        // Generate Consultation Room
+        async function generateRoom(bookingId) {
+            try {
+                const res = await fetch('https://ziobunc-backend.onrender.com/api/generate-room', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bookingId: bookingId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('roomLinkText').textContent = data.roomLink;
+                    document.getElementById('roomLinkAnchor').href = data.roomLink;
+                    document.getElementById('roomModal').style.display = 'block';
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Failed to generate room. Please try again.');
+            }
+        }
+
+        function closeRoomModal() {
+            document.getElementById('roomModal').style.display = 'none';
+        }
+
+        function copyRoomLink() {
+            const link = document.getElementById('roomLinkText').textContent;
+            navigator.clipboard.writeText(link);
+            alert('✅ Room link copied to clipboard! Send it to the patient via WhatsApp.');
+        }
+
+        // View Patient Records
         async function viewRecords(email) {
             document.getElementById('ehrModal').style.display = 'block';
             document.getElementById('ehrContent').innerHTML = '<p style="color: #888;">Loading records for ' + email + '...</p>';
@@ -181,15 +228,13 @@
             document.getElementById('ehrModal').style.display = 'none';
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('ehrModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
+            if (event.target == modal) modal.style.display = 'none';
+            const roomModal = document.getElementById('roomModal');
+            if (event.target == roomModal) roomModal.style.display = 'none';
         }
 
-        // Create Prescription
         async function createPrescription(name, email) {
             const med = prompt("Enter prescribed medication and dosage:");
             if (med) {
@@ -209,7 +254,7 @@
                     a.click();
                     document.body.removeChild(a);
                     alert('✅ Prescription downloaded!');
-                    loadBookings(); // Refresh to show record
+                    loadBookings();
                 } catch (err) {
                     alert('Error: ' + err.message);
                 }
