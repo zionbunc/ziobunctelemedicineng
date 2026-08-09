@@ -9,9 +9,11 @@ const socketIo = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
+
+// CORS SETUP FOR SOCKET.IO (THE FIX)
 const io = socketIo(server, {
     cors: {
-        origin: "https://ziobunctelemedicineng.vercel.app",
+        origin: ["https://ziobunctelemedicineng.vercel.app", "http://localhost:3000"],
         methods: ["GET", "POST"]
     }
 });
@@ -19,7 +21,7 @@ const io = socketIo(server, {
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-    origin: 'https://ziobunctelemedicineng.vercel.app'
+    origin: ['https://ziobunctelemedicineng.vercel.app', 'http://localhost:3000']
 }));
 
 app.use(express.urlencoded({ extended: true }));
@@ -76,26 +78,14 @@ async function seedDoctors() {
 }
 seedDoctors();
 
-// --- AUTOMATED ROOM GENERATION ---
+// AUTOMATED ROOM GENERATION
 app.post('/api/book', async (req, res) => {
     try {
         const { fullName, email, phone, doctor, datetime, type } = req.body;
-        
-        // Auto-generate roomId
         const roomId = crypto.randomBytes(5).toString('hex');
-        
-        const newBooking = new Booking({ 
-            fullName, 
-            email, 
-            phone, 
-            doctor, 
-            datetime, 
-            type,
-            roomId: roomId 
-        });
+        const newBooking = new Booking({ fullName, email, phone, doctor, datetime, type, roomId: roomId });
         await newBooking.save();
         console.log('✅ Booking SAVED TO CLOUD with Room ID:', roomId);
-        
         res.redirect('https://ziobunctelemedicineng.vercel.app/thank-you.html');
     } catch (err) {
         console.error('❌ Error saving booking:', err);
@@ -207,7 +197,7 @@ app.get('/', (req, res) => {
     res.send('Ziobunc Backend is running on Cloud!');
 });
 
-// --- REAL-TIME CHAT (Socket.io) ---
+// SOCKET.IO CONNECTION
 io.on('connection', (socket) => {
     console.log('🔗 A user connected to chat:', socket.id);
 
