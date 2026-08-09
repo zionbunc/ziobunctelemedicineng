@@ -61,7 +61,6 @@
         .dot-green { background-color: #28a745; }
         .dot-red { background-color: #dc3545; }
 
-        /* FAQ Styles */
         .faq-section { padding: 40px 0; max-width: 800px; margin: 0 auto; }
         .faq-item { background: var(--card-bg); padding: 15px 20px; margin-bottom: 10px; border-radius: 8px; box-shadow: var(--shadow); cursor: pointer; }
         .faq-question { font-weight: bold; display: flex; justify-content: space-between; align-items: center; color: var(--text-color); }
@@ -70,7 +69,6 @@
         .faq-item.active .faq-answer { display: block; }
         .faq-icon { font-size: 20px; }
 
-        /* Support Section in Footer */
         .footer-support { margin-top: 20px; font-size: 14px; line-height: 1.8; }
         .footer-support a { color: #4facfe; text-decoration: none; }
         .footer-support a:hover { text-decoration: underline; }
@@ -127,7 +125,7 @@
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question">What languages do you support? <span class="faq-icon">+</span></div>
-                <div class="faq-answer">We currently offer consultations in English, French, Hausa, and Yoruba. Please indicate your preference when booking.</div>
+                <div class="faq-answer">We currently offer consultations in English, Hausa, and Yoruba. Please indicate your preference when booking.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question">How do I upload my prescription? <span class="faq-icon">+</span></div>
@@ -147,14 +145,13 @@
                 <a href="tel:07068875355">07068875355</a><br>
                 <strong>📧 Support Email:</strong> 
                 <a href="mailto:bunmait@gmail.com">bunmait@gmail.com</a><br>
-                <strong>🔒 Admin:</strong> 
-                <a href="https://ziobunc-backend.onrender.com/dashboard">Doctor Login</a>
+                <strong>🔒 Staff Portal:</strong> 
+                <a href="https://ziobunc-backend.onrender.com/dashboard">Login</a>
             </div>
         </div>
     </footer>
 
     <script>
-        // Theme Toggle
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const btn = document.querySelector('.theme-toggle');
@@ -165,14 +162,12 @@
             }
         }
 
-        // FAQ Toggle
         function toggleFaq(element) {
             element.classList.toggle('active');
             const icon = element.querySelector('.faq-icon');
             icon.textContent = element.classList.contains('active') ? '-' : '+';
         }
 
-        // Load Doctors
         async function loadDoctorsForPatients() {
             try {
                 const res = await fetch('https://ziobunc-backend.onrender.com/api/doctors');
