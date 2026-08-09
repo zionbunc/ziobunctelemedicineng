@@ -2,11 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const PDFDocument = require('pdfkit');
-const cors = require('cors'); // <--- THIS IS THE FIX
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ALLOW YOUR WEBSITE TO FETCH DATA (CORS FIX)
 app.use(cors({
     origin: 'https://ziobunctelemedicineng.vercel.app'
 }));
@@ -28,7 +27,6 @@ mongoose.connect(MONGODB_URI, {
     console.error('❌ MongoDB Connection Error:', err);
 });
 
-// DOCTOR SCHEMA
 const doctorSchema = new mongoose.Schema({
     name: String,
     specialty: String,
@@ -36,7 +34,7 @@ const doctorSchema = new mongoose.Schema({
 });
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
-// PATIENT BOOKING SCHEMA
+// UPDATED: Added medication field to store prescription text
 const bookingSchema = new mongoose.Schema({
     fullName: String,
     email: String,
@@ -44,11 +42,11 @@ const bookingSchema = new mongoose.Schema({
     doctor: String,
     datetime: String,
     type: String,
+    medication: { type: String, default: '' }, // <--- Store medication here
     createdAt: { type: Date, default: Date.now }
 });
 const Booking = mongoose.model('Booking', bookingSchema);
 
-// SEED DATABASE
 async function seedDoctors() {
     try {
         const count = await Doctor.countDocuments();
@@ -66,7 +64,6 @@ async function seedDoctors() {
 }
 seedDoctors();
 
-// SAVE BOOKING
 app.post('/api/book', async (req, res) => {
     try {
         const { fullName, email, phone, doctor, datetime, type } = req.body;
@@ -80,7 +77,6 @@ app.post('/api/book', async (req, res) => {
     }
 });
 
-// GET ALL BOOKINGS
 app.get('/api/bookings', async (req, res) => {
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
@@ -90,7 +86,6 @@ app.get('/api/bookings', async (req, res) => {
     }
 });
 
-// GET ALL DOCTORS
 app.get('/api/doctors', async (req, res) => {
     try {
         const doctors = await Doctor.find();
@@ -100,7 +95,6 @@ app.get('/api/doctors', async (req, res) => {
     }
 });
 
-// TOGGLE DOCTOR AVAILABILITY
 app.post('/api/toggle-availability', async (req, res) => {
     try {
         const { doctorId } = req.body;
@@ -115,10 +109,18 @@ app.post('/api/toggle-availability', async (req, res) => {
     }
 });
 
-// PRESCRIPTION GENERATION
+// UPDATED: Save medication to the patient's booking record
 app.post('/api/prescription', async (req, res) => {
     try {
         const { patientName, patientEmail, medication } = req.body;
+
+        // Find the most recent booking for this patient and save the medication
+        const booking = await Booking.findOne({ email: patientEmail }).sort({ createdAt: -1 });
+        if (booking) {
+            booking.medication = medication;
+            await booking.save();
+            console.log('✅ Medication saved to patient record:', patientEmail);
+        }
 
         const doc = new PDFDocument();
         let buffers = [];
@@ -161,6 +163,20 @@ app.post('/api/prescription', async (req, res) => {
     }
 });
 
+// GET PATIENT RECORDS
+app.get('/api/patient-records', async (req, res) => {
+    try {
+        const { email } = req.query;
+        if (!email) return res.status(400).json({ error: 'Email required' });
+
+        const bookings = await Booking.find({ email: email }).sort({ createdAt: -1 });
+        res.json(bookings);
+    } catch (err) {
+        console.error('❌ Error fetching patient records:', err);
+        res.status(500).json({ error: 'Failed to fetch records' });
+    }
+});
+
 app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
@@ -171,29 +187,4 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-});
-
-// GET PATIENT RECORDS (SECURE - ADMIN ONLY)
-app.get('/api/patient-records', async (req, res) => {
-    try {
-        const { email } = req.query;
-        if (!email) return res.status(400).json({ error: 'Email required' });
-
-        // Fetch all prescriptions for this patient from the booking data
-        // Since we don't have a separate prescription table, we'll look up the patient's email
-        const bookings = await Booking.find({ email: email }).sort({ createdAt: -1 });
-        
-        // Format the records
-        const records = bookings.map(b => ({
-            date: b.createdAt,
-            doctor: b.doctor,
-            type: b.type,
-            medication: b.medication || 'Prescription generated during visit'
-        }));
-
-        res.json(records);
-    } catch (err) {
-        console.error('❌ Error fetching patient records:', err);
-        res.status(500).json({ error: 'Failed to fetch records' });
-    }
 });
