@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Chat - Ziobunc Telemedicine</title>
+    <title>Live Chat - Ziobunc Telemedicine</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: #f4f7fc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .container { max-width: 600px; width: 100%; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
         h1 { color: #1a2b4c; margin-bottom: 10px; }
         p { color: #555; margin-bottom: 30px; }
-        .chat-box { background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; padding: 20px; height: 200px; overflow-y: auto; text-align: left; margin-bottom: 15px; }
-        .chat-msg { margin-bottom: 10px; }
-        .chat-msg strong { color: #007bff; }
+        .chat-box { background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; padding: 20px; height: 300px; overflow-y: auto; text-align: left; margin-bottom: 15px; display: flex; flex-direction: column; }
+        .chat-msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; max-width: 80%; word-wrap: break-word; }
+        .chat-msg.system { background: #e7f3ff; color: #555; text-align: center; max-width: 100%; font-size: 12px; }
+        .chat-msg.sent { background: #007bff; color: white; align-self: flex-end; }
+        .chat-msg.received { background: #e9ecef; color: #333; align-self: flex-start; }
+        .chat-msg .time { font-size: 10px; opacity: 0.7; margin-top: 4px; display: block; }
         .input-area { display: flex; gap: 10px; }
         input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
         button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
@@ -22,11 +25,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>💬 Text Chat</h1>
+        <h1>💬 Live Chat</h1>
         <p>Chat with your doctor in real-time.</p>
         
         <div class="chat-box" id="chatBox">
-            <div class="chat-msg"><strong>System:</strong> You are now connected. Please wait for the doctor to respond.</div>
+            <div class="chat-msg system">Connecting to chat room...</div>
         </div>
         
         <div class="input-area">
@@ -37,24 +40,59 @@
         <a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Back to Home</a>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const msg = input.value.trim();
-            if (msg) {
-                const chatBox = document.getElementById('chatBox');
-                const newMsg = document.createElement('div');
-                newMsg.className = 'chat-msg';
-                newMsg.innerHTML = `<strong>You:</strong> ${msg}`;
-                chatBox.appendChild(newMsg);
-                chatBox.scrollTop = chatBox.scrollHeight;
-                input.value = '';
+        // Get room ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room');
+        
+        if (!roomId) {
+            document.querySelector('.container').innerHTML = '<h1 style="color:red;">❌ Invalid Room</h1><p>Please use the link provided by your doctor.</p><a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Back to Home</a>';
+        } else {
+            const socket = io('https://ziobunc-backend.onrender.com');
+            
+            socket.emit('join-room', roomId);
+            
+            socket.on('user-joined', (msg) => {
+                addMessage('system', msg);
+            });
+            
+            socket.on('chat-message', (data) => {
+                addMessage('received', data.message, data.sender, data.timestamp);
+            });
+            
+            function sendMessage() {
+                const input = document.getElementById('chatInput');
+                const msg = input.value.trim();
+                if (msg) {
+                    socket.emit('chat-message', {
+                        room: roomId,
+                        sender: 'Patient',
+                        message: msg
+                    });
+                    addMessage('sent', msg, 'You');
+                    input.value = '';
+                }
             }
+            
+            function addMessage(type, text, sender = '', time = '') {
+                const chatBox = document.getElementById('chatBox');
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `chat-msg ${type}`;
+                const timestamp = time || new Date().toLocaleTimeString();
+                if (type === 'system') {
+                    msgDiv.innerHTML = text;
+                } else {
+                    msgDiv.innerHTML = `<strong>${sender}</strong>: ${text}<span class="time">${timestamp}</span>`;
+                }
+                chatBox.appendChild(msgDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+            
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
         }
-
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
-        });
     </script>
 </body>
 </html>

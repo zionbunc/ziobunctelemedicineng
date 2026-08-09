@@ -4,7 +4,18 @@ const path = require('path');
 const PDFDocument = require('pdfkit');
 const cors = require('cors');
 const crypto = require('crypto');
+const http = require('http');
+const socketIo = require('socket.io');
+
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+    cors: {
+        origin: "https://ziobunctelemedicineng.vercel.app",
+        methods: ["GET", "POST"]
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
@@ -65,12 +76,26 @@ async function seedDoctors() {
 }
 seedDoctors();
 
+// --- AUTOMATED ROOM GENERATION ---
 app.post('/api/book', async (req, res) => {
     try {
         const { fullName, email, phone, doctor, datetime, type } = req.body;
-        const newBooking = new Booking({ fullName, email, phone, doctor, datetime, type });
+        
+        // Auto-generate roomId
+        const roomId = crypto.randomBytes(5).toString('hex');
+        
+        const newBooking = new Booking({ 
+            fullName, 
+            email, 
+            phone, 
+            doctor, 
+            datetime, 
+            type,
+            roomId: roomId 
+        });
         await newBooking.save();
-        console.log('✅ Booking SAVED TO CLOUD:', newBooking);
+        console.log('✅ Booking SAVED TO CLOUD with Room ID:', roomId);
+        
         res.redirect('https://ziobunctelemedicineng.vercel.app/thank-you.html');
     } catch (err) {
         console.error('❌ Error saving booking:', err);
@@ -107,32 +132,6 @@ app.post('/api/toggle-availability', async (req, res) => {
         res.json({ success: true, available: doctor.available });
     } catch (err) {
         res.status(500).json({ error: 'Failed to toggle availability' });
-    }
-});
-
-// GENERATE CONSULTATION ROOM LINK (FIXED VERSION)
-app.post('/api/generate-room', async (req, res) => {
-    try {
-        const { bookingId } = req.body;
-        if (!bookingId) {
-            return res.status(400).json({ error: 'Booking ID is required' });
-        }
-
-        const booking = await Booking.findById(bookingId);
-        if (!booking) {
-            return res.status(404).json({ error: 'Booking not found' });
-        }
-
-        // Generate a unique room ID
-        const roomId = crypto.randomBytes(5).toString('hex');
-        booking.roomId = roomId;
-        await booking.save();
-
-        const roomLink = `https://ziobunctelemedicineng.vercel.app/room.html?room=${roomId}`;
-        res.json({ success: true, roomLink: roomLink });
-    } catch (err) {
-        console.error('❌ Error generating room:', err);
-        res.status(500).json({ error: 'Failed to generate room' });
     }
 });
 
@@ -208,6 +207,30 @@ app.get('/', (req, res) => {
     res.send('Ziobunc Backend is running on Cloud!');
 });
 
-app.listen(PORT, () => {
+// --- REAL-TIME CHAT (Socket.io) ---
+io.on('connection', (socket) => {
+    console.log('🔗 A user connected to chat:', socket.id);
+
+    socket.on('join-room', (roomId) => {
+        socket.join(roomId);
+        console.log(`👤 User joined room: ${roomId}`);
+        socket.to(roomId).emit('user-joined', 'A patient has joined the chat.');
+    });
+
+    socket.on('chat-message', (data) => {
+        console.log(`💬 Message in ${data.room}: ${data.message}`);
+        socket.to(data.room).emit('chat-message', {
+            sender: data.sender,
+            message: data.message,
+            timestamp: new Date().toLocaleTimeString()
+        });
+    });
+
+    socket.on('disconnect', () => {
+        console.log('👋 A user disconnected.');
+    });
+});
+
+server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
