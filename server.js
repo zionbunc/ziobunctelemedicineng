@@ -2,8 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const cors = require('cors'); // <--- THIS IS THE FIX
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ALLOW YOUR WEBSITE TO FETCH DATA (CORS FIX)
+app.use(cors({
+    origin: 'https://ziobunctelemedicineng.vercel.app'
+}));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -22,7 +28,7 @@ mongoose.connect(MONGODB_URI, {
     console.error('❌ MongoDB Connection Error:', err);
 });
 
-// DOCTOR SCHEMA (with availability)
+// DOCTOR SCHEMA
 const doctorSchema = new mongoose.Schema({
     name: String,
     specialty: String,
@@ -48,9 +54,9 @@ async function seedDoctors() {
         const count = await Doctor.countDocuments();
         if (count === 0) {
             await Doctor.create([
-                { name: 'Dr. Adewale', specialty: 'General', available: true },
-                { name: 'Dr. Chioma', specialty: 'Pediatrics', available: true },
-                { name: 'Dr. Emeka', specialty: 'Dermatology', available: false }
+                { name: 'Dr. Adewale', specialty: 'General', available: false },
+                { name: 'Dr. Chioma', specialty: 'Pediatrics', available: false },
+                { name: 'Dr. Emeka', specialty: 'Dermatology', available: true }
             ]);
             console.log('✅ Sample doctors added to cloud database');
         }
@@ -84,7 +90,7 @@ app.get('/api/bookings', async (req, res) => {
     }
 });
 
-// GET ALL DOCTORS (for availability on homepage)
+// GET ALL DOCTORS
 app.get('/api/doctors', async (req, res) => {
     try {
         const doctors = await Doctor.find();
