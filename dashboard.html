@@ -15,15 +15,33 @@
         tr:hover { background-color: #f1f1f1; }
         .back-link { display: block; text-align: center; margin-top: 30px; }
         .back-link a { color: #007bff; text-decoration: none; }
-        .rx-btn { background: #ffc107; color: #1a2b4c; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .rx-btn { background: #ffc107; color: #1a2b4c; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 12px; font-weight: bold; cursor: pointer; margin-right: 5px; }
         .rx-btn:hover { background: #e0a800; }
+        .avail-btn { background: #28a745; color: white; padding: 5px 12px; border-radius: 20px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .avail-btn.busy { background: #dc3545; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🩺 Doctor Dashboard</h1>
-        <p style="text-align: center; color: #666;">Welcome, Dr. Adewale. Here are your upcoming appointments.</p>
-        
+        <p style="text-align: center; color: #666;">Manage your doctors and appointments below.</p>
+
+        <h3 style="margin-top: 20px;">👨‍⚕️ Manage Doctors</h3>
+        <table id="doctorTable">
+            <thead>
+                <tr>
+                    <th>Doctor Name</th>
+                    <th>Specialty</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="doctorBody">
+                <!-- Doctors loaded here -->
+            </tbody>
+        </table>
+
+        <h3 style="margin-top: 30px;">📋 Patient Appointments</h3>
         <table id="appointmentsTable">
             <thead>
                 <tr>
@@ -37,7 +55,7 @@
                 </tr>
             </thead>
             <tbody id="appointmentsBody">
-                <!-- Data will be loaded here -->
+                <!-- Appointments loaded here -->
             </tbody>
         </table>
         
@@ -45,14 +63,48 @@
     </div>
 
     <script>
+        // Load Doctors
+        async function loadDoctors() {
+            try {
+                const res = await fetch('https://ziobunc-backend.onrender.com/api/doctors');
+                const doctors = await res.json();
+                const tbody = document.getElementById('doctorBody');
+                tbody.innerHTML = '';
+                doctors.forEach(d => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${d.name}</td>
+                        <td>${d.specialty}</td>
+                        <td><span style="color: ${d.available ? '#28a745' : '#dc3545'}; font-weight: bold;">${d.available ? '🟢 Available' : '🔴 Busy'}</span></td>
+                        <td><button class="avail-btn ${d.available ? '' : 'busy'}" onclick="toggleAvailability('${d._id}')">${d.available ? 'Set Busy' : 'Set Available'}</button></td>
+                    `;
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Toggle Availability
+        async function toggleAvailability(id) {
+            try {
+                const res = await fetch('https://ziobunc-backend.onrender.com/api/toggle-availability', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ doctorId: id })
+                });
+                if (res.ok) loadDoctors();
+            } catch (err) {
+                alert('Error toggling status');
+            }
+        }
+
+        // Load Appointments
         async function loadBookings() {
             try {
                 const response = await fetch('https://ziobunc-backend.onrender.com/api/bookings');
                 const bookings = await response.json();
-                
                 const tbody = document.getElementById('appointmentsBody');
                 tbody.innerHTML = '';
-                
                 bookings.forEach(b => {
                     const row = tbody.insertRow();
                     row.innerHTML = `
@@ -62,9 +114,7 @@
                         <td>${b.doctor}</td>
                         <td>${new Date(b.datetime).toLocaleString()}</td>
                         <td>${b.type}</td>
-                        <td>
-                            <a class="rx-btn" onclick="createPrescription('${b.fullName}', '${b.email}')">📄 Create Prescription</a>
-                        </td>
+                        <td><a class="rx-btn" onclick="createPrescription('${b.fullName}', '${b.email}')">📄 Prescribe</a></td>
                     `;
                 });
             } catch (err) {
@@ -73,23 +123,19 @@
                     '<tr><td colspan="7" style="text-align:center; color:red;">Failed to load appointments.</td></tr>';
             }
         }
-        
+
+        // Create Prescription
         async function createPrescription(name, email) {
-            const med = prompt("Enter prescribed medication and dosage (e.g., Amoxicillin 500mg, 3x daily for 7 days):");
+            const med = prompt("Enter prescribed medication and dosage:");
             if (med) {
                 try {
-                    const response = await fetch('https://ziobunc-backend.onrender.com/api/prescription', {
+                    const res = await fetch('https://ziobunc-backend.onrender.com/api/prescription', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ patientName: name, patientEmail: email, medication: med })
                     });
-
-                    if (!response.ok) {
-                        throw new Error(`Server returned status ${response.status}`);
-                    }
-
-                    // Get the PDF blob and download it
-                    const blob = await response.blob();
+                    if (!res.ok) throw new Error('Server error');
+                    const blob = await res.blob();
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -97,16 +143,15 @@
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                    
-                    alert('✅ Prescription downloaded successfully!');
+                    alert('✅ Prescription downloaded!');
                 } catch (err) {
-                    alert('❌ Error: ' + err.message + '. Check the browser console (F12) for details.');
-                    console.error(err);
+                    alert('Error: ' + err.message);
                 }
             }
         }
 
+        // Load everything on page load
+        loadDoctors();
         loadBookings();
     </script>
 </body>

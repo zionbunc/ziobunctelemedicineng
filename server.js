@@ -5,7 +5,6 @@ const PDFDocument = require('pdfkit');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Handle CORS and file downloads
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -23,6 +22,7 @@ mongoose.connect(MONGODB_URI, {
     console.error('❌ MongoDB Connection Error:', err);
 });
 
+// DOCTOR SCHEMA (with availability)
 const doctorSchema = new mongoose.Schema({
     name: String,
     specialty: String,
@@ -30,6 +30,7 @@ const doctorSchema = new mongoose.Schema({
 });
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
+// PATIENT BOOKING SCHEMA
 const bookingSchema = new mongoose.Schema({
     fullName: String,
     email: String,
@@ -41,6 +42,7 @@ const bookingSchema = new mongoose.Schema({
 });
 const Booking = mongoose.model('Booking', bookingSchema);
 
+// SEED DATABASE
 async function seedDoctors() {
     try {
         const count = await Doctor.countDocuments();
@@ -58,6 +60,7 @@ async function seedDoctors() {
 }
 seedDoctors();
 
+// SAVE BOOKING
 app.post('/api/book', async (req, res) => {
     try {
         const { fullName, email, phone, doctor, datetime, type } = req.body;
@@ -71,6 +74,7 @@ app.post('/api/book', async (req, res) => {
     }
 });
 
+// GET ALL BOOKINGS
 app.get('/api/bookings', async (req, res) => {
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
@@ -80,6 +84,32 @@ app.get('/api/bookings', async (req, res) => {
     }
 });
 
+// GET ALL DOCTORS (for availability on homepage)
+app.get('/api/doctors', async (req, res) => {
+    try {
+        const doctors = await Doctor.find();
+        res.json(doctors);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch doctors' });
+    }
+});
+
+// TOGGLE DOCTOR AVAILABILITY
+app.post('/api/toggle-availability', async (req, res) => {
+    try {
+        const { doctorId } = req.body;
+        const doctor = await Doctor.findById(doctorId);
+        if (!doctor) return res.status(404).json({ error: 'Doctor not found' });
+
+        doctor.available = !doctor.available;
+        await doctor.save();
+        res.json({ success: true, available: doctor.available });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to toggle availability' });
+    }
+});
+
+// PRESCRIPTION GENERATION
 app.post('/api/prescription', async (req, res) => {
     try {
         const { patientName, patientEmail, medication } = req.body;
@@ -89,8 +119,6 @@ app.post('/api/prescription', async (req, res) => {
         doc.on('data', buffers.push.bind(buffers));
         doc.on('end', () => {
             let pdfData = Buffer.concat(buffers);
-            
-            // IMPORTANT FIX: Sends the PDF as a downloadable file
             res.set({
                 'Content-Type': 'application/pdf',
                 'Content-Disposition': `attachment; filename="prescription_${Date.now()}.pdf"`
@@ -98,10 +126,8 @@ app.post('/api/prescription', async (req, res) => {
             res.send(pdfData);
         });
 
-        // Branded Header
         doc.fontSize(25).fillColor('#007bff').text('Ziobunc Telemedicine', 100, 50, { align: 'center' });
         doc.fontSize(10).fillColor('#555').text('Global Healthcare, Anywhere.', { align: 'center' });
-        
         doc.moveDown();
         doc.moveDown();
 

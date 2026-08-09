@@ -54,6 +54,13 @@
         .nav-links { display: flex; gap: 15px; align-items: center; }
         .nav-link { text-decoration: none; color: var(--text-color); font-weight: 500; }
         body.dark-mode .nav-link { color: #e0e0e0; }
+
+        /* Doctor List Styles */
+        .doctor-list { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .doctor-card { background: var(--card-bg); padding: 15px; border-radius: 8px; box-shadow: var(--shadow); text-align: center; border: 1px solid #eee; }
+        .status-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; }
+        .dot-green { background-color: #28a745; }
+        .dot-red { background-color: #dc3545; }
     </style>
 </head>
 <body>
@@ -62,7 +69,7 @@
             <div class="logo">Ziobunc Telemedicine</div>
             <div class="nav-links">
                 <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
-                <a href="admin-login.html" class="nav-link">Doctor Login</a>
+                <a href="https://ziobunc-backend.onrender.com/dashboard" class="nav-link">Doctor Login</a>
                 <a href="book.html" class="btn">Book a Doctor</a>
             </div>
         </div>
@@ -73,6 +80,11 @@
             <h1>Top-Notch Healthcare, Anywhere.</h1>
             <p>Connect with verified doctors via video, audio, or chat instantly. Global payments accepted.</p>
             <a href="book.html" class="cta-btn">Get Started Now</a>
+        </div>
+
+        <h2 class="section-title">Our Doctors</h2>
+        <div class="doctor-list" id="doctorList">
+            <p>Loading doctors...</p>
         </div>
 
         <h2 class="section-title">Why Ziobunc?</h2>
@@ -107,6 +119,32 @@
                 btn.textContent = '🌙 Dark';
             }
         }
+
+        // Load Doctors with Live Status for Patients
+        async function loadDoctorsForPatients() {
+            try {
+                const res = await fetch('https://ziobunc-backend.onrender.com/api/doctors');
+                const doctors = await res.json();
+                const container = document.getElementById('doctorList');
+                container.innerHTML = '';
+                doctors.forEach(d => {
+                    const card = document.createElement('div');
+                    card.className = 'doctor-card';
+                    const dotClass = d.available ? 'dot-green' : 'dot-red';
+                    const statusText = d.available ? 'Available' : 'Busy';
+                    card.innerHTML = `
+                        <h4>${d.name}</h4>
+                        <p style="color:#666; font-size:14px;">${d.specialty}</p>
+                        <p><span class="status-dot ${dotClass}"></span> ${statusText}</p>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                document.getElementById('doctorList').innerHTML = '<p style="color:red;">Could not load doctor status.</p>';
+            }
+        }
+
+        loadDoctorsForPatients();
     </script>
 </body>
 </html>
