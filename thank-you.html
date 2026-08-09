@@ -6,14 +6,13 @@
     <title>Appointment Booked - Ziobunc Telemedicine</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f4f7fc; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .container { max-width: 600px; width: 100%; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+        body { background: #f4f7fc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; width: 100%; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
         .icon { font-size: 60px; color: #28a745; margin-bottom: 10px; }
         h1 { color: #28a745; margin-bottom: 10px; }
         p { color: #555; margin-bottom: 20px; }
         
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        
         .action-btn { 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; border: 2px solid #eee;
@@ -27,10 +26,18 @@
         
         .video-btn { display: inline-block; background: #007bff; color: white; padding: 12px 24px; border-radius: 30px; text-decoration: none; margin-top: 10px; font-weight: bold; }
         .video-btn:hover { background: #0056b3; }
+        
+        /* Upload and Support Section */
+        .support-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
+        .upload-btn { background: #ffc107; color: #1a2b4c; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 15px; }
+        .support-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .support-item { background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 14px; }
+        .support-item strong { display: block; color: #333; }
         a { color: #007bff; text-decoration: none; }
+        .back-link { display: block; margin-top: 20px; }
         
         @media (max-width: 500px) {
-            .action-grid { grid-template-columns: 1fr; }
+            .action-grid, .support-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -39,34 +46,44 @@
         <div class="icon">✅</div>
         <h1>Appointment Booked!</h1>
         <p>Your consultation has been scheduled. A confirmation has been sent to the admin.</p>
+        
+        <div style="background: #e8f5e9; padding: 10px; border-radius: 8px; margin-bottom: 15px; color: #2e7d32; font-size: 14px;">
+            🧑‍⚕️ <strong>Free Pharmacist Follow-up Included!</strong><br>
+            A pharmacist will review your prescription and reach out to you shortly.
+        </div>
+
         <p style="font-size: 14px; color: #888;">Please confirm your booking by sending a notification below.</p>
 
         <div class="action-grid">
-            <!-- Email Button to Admin -->
             <a href="mailto:ziobuncenterprise@gmail.com?subject=Ziobunc%20Appointment%20Confirmation&body=Hello%20Admin,%0A%0AMy%20name%20is%20[Your%20Name]%20and%20I%20have%20booked%20a%20consultation.%0A%0APlease%20confirm%20my%20appointment.%0A%0AThank%20you." class="action-btn email">
                 <span style="font-size: 24px;">📧</span>
                 Email Admin
             </a>
-
-            <!-- WhatsApp Button to Admin -->
             <a href="https://wa.me/2348068856864?text=Hello%20Admin,%20I%20have%20booked%20a%20consultation%20with%20Ziobunc%20Telemedicine.%20Please%20confirm%20my%20appointment." class="action-btn whatsapp">
                 <span style="font-size: 24px;">💬</span>
                 WhatsApp Admin
             </a>
         </div>
 
-        <p style="font-size: 14px; color: #888; margin-top: 15px;">When it's time for your appointment, click below to join your doctor.</p>
-        <a href="video-call.html" class="video-btn">📹 Join Video Call</a>
-        <p style="margin-top: 20px;"><a href="https://ziobunctelemedicineng.vercel.app">← Return to Home</a></p>
-    </div>
+        <div class="support-section">
+            <a href="#" class="upload-btn" onclick="alert('📸 Please upload a photo of your prescription or any medical documents for the pharmacist.'); return false;">📸 Upload Prescription</a>
+            
+            <div class="support-grid">
+                <div class="support-item">
+                    <strong>📞 Customer Service</strong>
+                    <a href="tel:08068856864">08068856864</a><br>
+                    <a href="tel:07068875355">07068875355</a>
+                </div>
+                <div class="support-item">
+                    <strong>📧 Support Email</strong>
+                    <a href="mailto:bunmait@gmail.com">bunmait@gmail.com</a>
+                </div>
+            </div>
+        </div>
 
-    <script>
-        // Simple script to grab the booking info from the URL if needed
-        const urlParams = new URLSearchParams(window.location.search);
-        const doctor = urlParams.get('doctor');
-        if(doctor) {
-            document.getElementById('displayDoctor').textContent = doctor;
-        }
-    </script>
+        <p style="font-size: 14px; color: #888; margin-top: 20px;">When it's time for your appointment, click below to join your doctor.</p>
+        <a href="video-call.html" class="video-btn">📹 Join Video Call</a>
+        <a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Return to Home</a>
+    </div>
 </body>
 </html>
