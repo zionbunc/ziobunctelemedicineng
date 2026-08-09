@@ -5,6 +5,7 @@ const PDFDocument = require('pdfkit');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Handle CORS and file downloads
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -22,7 +23,6 @@ mongoose.connect(MONGODB_URI, {
     console.error('❌ MongoDB Connection Error:', err);
 });
 
-// DOCTOR SCHEMA
 const doctorSchema = new mongoose.Schema({
     name: String,
     specialty: String,
@@ -30,7 +30,6 @@ const doctorSchema = new mongoose.Schema({
 });
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
-// PATIENT BOOKING SCHEMA
 const bookingSchema = new mongoose.Schema({
     fullName: String,
     email: String,
@@ -42,7 +41,6 @@ const bookingSchema = new mongoose.Schema({
 });
 const Booking = mongoose.model('Booking', bookingSchema);
 
-// SEED DATABASE
 async function seedDoctors() {
     try {
         const count = await Doctor.countDocuments();
@@ -60,7 +58,6 @@ async function seedDoctors() {
 }
 seedDoctors();
 
-// SAVE BOOKING
 app.post('/api/book', async (req, res) => {
     try {
         const { fullName, email, phone, doctor, datetime, type } = req.body;
@@ -74,7 +71,6 @@ app.post('/api/book', async (req, res) => {
     }
 });
 
-// GET ALL BOOKINGS
 app.get('/api/bookings', async (req, res) => {
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
@@ -84,17 +80,17 @@ app.get('/api/bookings', async (req, res) => {
     }
 });
 
-// GENERATE PRESCRIPTION PDF (IN-MEMORY FOR RENDER)
 app.post('/api/prescription', async (req, res) => {
     try {
         const { patientName, patientEmail, medication } = req.body;
 
-        // Create a PDF in memory
         const doc = new PDFDocument();
         let buffers = [];
         doc.on('data', buffers.push.bind(buffers));
         doc.on('end', () => {
             let pdfData = Buffer.concat(buffers);
+            
+            // IMPORTANT FIX: Sends the PDF as a downloadable file
             res.set({
                 'Content-Type': 'application/pdf',
                 'Content-Disposition': `attachment; filename="prescription_${Date.now()}.pdf"`
@@ -109,7 +105,6 @@ app.post('/api/prescription', async (req, res) => {
         doc.moveDown();
         doc.moveDown();
 
-        // Prescription Content
         doc.fontSize(14).fillColor('#333').text('DIGITAL PRESCRIPTION', { align: 'center', underline: true });
         doc.moveDown();
 
@@ -134,7 +129,6 @@ app.post('/api/prescription', async (req, res) => {
     }
 });
 
-// SERVE DASHBOARD
 app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
