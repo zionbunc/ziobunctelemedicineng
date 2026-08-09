@@ -27,7 +27,6 @@
         .video-btn { display: inline-block; background: #007bff; color: white; padding: 12px 24px; border-radius: 30px; text-decoration: none; margin-top: 10px; font-weight: bold; }
         .video-btn:hover { background: #0056b3; }
         
-        /* Upload and Support Section */
         .support-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
         .upload-btn { background: #ffc107; color: #1a2b4c; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 15px; }
         .support-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
@@ -35,7 +34,12 @@
         .support-item strong { display: block; color: #333; }
         a { color: #007bff; text-decoration: none; }
         .back-link { display: block; margin-top: 20px; }
-        
+
+        /* Payment Section */
+        .payment-section { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; border: 1px solid #90caf9; }
+        .pay-btn { background: #25D366; color: white; padding: 12px 24px; border: none; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .pay-btn:hover { background: #1da851; }
+
         @media (max-width: 500px) {
             .action-grid, .support-grid { grid-template-columns: 1fr; }
         }
@@ -52,7 +56,18 @@
             A pharmacist will review your prescription and reach out to you shortly.
         </div>
 
-        <p style="font-size: 14px; color: #888;">Please confirm your booking by sending a notification below.</p>
+        <!-- Payment Section -->
+        <div class="payment-section">
+            <p style="font-weight: bold; color: #0d47a1;">💳 Complete Your Booking</p>
+            <p style="font-size: 14px; color: #555; margin-bottom: 15px;">
+                To confirm your appointment, please complete your payment via WhatsApp.
+            </p>
+            <a href="https://wa.me/2348068856864?text=Hello%20Admin,%20I%20have%20booked%20a%20consultation%20with%20Ziobunc%20Telemedicine.%20Please%20send%20me%20the%20payment%20details%20so%20I%20can%20complete%20my%20booking." class="pay-btn" target="_blank">
+                💬 Pay via WhatsApp
+            </a>
+        </div>
+
+        <p style="font-size: 14px; color: #888; margin-top: 15px;">Please confirm your booking by sending a notification below.</p>
 
         <div class="action-grid">
             <a href="mailto:ziobuncenterprise@gmail.com?subject=Ziobunc%20Appointment%20Confirmation&body=Hello%20Admin,%0A%0AMy%20name%20is%20[Your%20Name]%20and%20I%20have%20booked%20a%20consultation.%0A%0APlease%20confirm%20my%20appointment.%0A%0AThank%20you." class="action-btn email">
@@ -66,7 +81,6 @@
         </div>
 
         <div class="support-section">
-            <!-- UPDATED: Opens email with a preset subject and body for prescription uploads -->
             <a href="mailto:bunmait@gmail.com?subject=Prescription%20Upload%20for%20Ziobunc%20Telemedicine&body=Hello%20Support,%0A%0APlease%20find%20my%20prescription%20attached%20to%20this%20email.%0A%0AMy%20Name:%20[Enter%20Your%20Name]%0AMy%20Phone:%20[Enter%20Your%20Phone]%0A%0AThank%20you." class="upload-btn">📸 Upload Prescription (via Email)</a>
             
             <div class="support-grid">
