@@ -2,8 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const PDFDocument = require('pdfkit');
-const fs = require('fs');
-const nodemailer = require('nodemailer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -86,15 +84,23 @@ app.get('/api/bookings', async (req, res) => {
     }
 });
 
-// GENERATE PRESCRIPTION PDF
+// GENERATE PRESCRIPTION PDF (IN-MEMORY FOR RENDER)
 app.post('/api/prescription', async (req, res) => {
     try {
         const { patientName, patientEmail, medication } = req.body;
-        const fileName = `prescription_${Date.now()}.pdf`;
-        const filePath = path.join(__dirname, fileName);
 
+        // Create a PDF in memory
         const doc = new PDFDocument();
-        doc.pipe(fs.createWriteStream(filePath));
+        let buffers = [];
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+            let pdfData = Buffer.concat(buffers);
+            res.set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `attachment; filename="prescription_${Date.now()}.pdf"`
+            });
+            res.send(pdfData);
+        });
 
         // Branded Header
         doc.fontSize(25).fillColor('#007bff').text('Ziobunc Telemedicine', 100, 50, { align: 'center' });
@@ -122,20 +128,11 @@ app.post('/api/prescription', async (req, res) => {
 
         doc.end();
 
-        // Wait for PDF to finish writing
-        doc.on('finish', () => {
-            // Send the file to the client
-            res.json({ url: `https://ziobunc-backend.onrender.com/${fileName}` });
-        });
-
     } catch (err) {
         console.error('❌ Error generating prescription:', err);
         res.status(500).json({ error: 'Failed to generate prescription' });
     }
 });
-
-// SERVE STATIC FILES (for PDF download)
-app.use(express.static(__dirname));
 
 // SERVE DASHBOARD
 app.get('/dashboard', (req, res) => {
