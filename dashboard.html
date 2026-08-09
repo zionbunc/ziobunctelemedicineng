@@ -15,7 +15,8 @@
         tr:hover { background-color: #f1f1f1; }
         .back-link { display: block; text-align: center; margin-top: 30px; }
         .back-link a { color: #007bff; text-decoration: none; }
-        .loading { text-align: center; padding: 20px; color: #666; }
+        .rx-btn { background: #ffc107; color: #1a2b4c; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 12px; font-weight: bold; }
+        .rx-btn:hover { background: #e0a800; }
     </style>
 </head>
 <body>
@@ -23,9 +24,7 @@
         <h1>🩺 Doctor Dashboard</h1>
         <p style="text-align: center; color: #666;">Welcome, Dr. Adewale. Here are your upcoming appointments.</p>
         
-        <div id="loading" class="loading">⏳ Loading appointments from the cloud...</div>
-        
-        <table id="appointmentsTable" style="display:none;">
+        <table id="appointmentsTable">
             <thead>
                 <tr>
                     <th>Patient Name</th>
@@ -34,9 +33,12 @@
                     <th>Doctor</th>
                     <th>Date & Time</th>
                     <th>Type</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-            <tbody id="appointmentsBody"></tbody>
+            <tbody id="appointmentsBody">
+                <!-- Data will be loaded here -->
+            </tbody>
         </table>
         
         <div class="back-link"><a href="https://ziobunctelemedicineng.vercel.app">← Back to Home</a></div>
@@ -46,44 +48,53 @@
         async function loadBookings() {
             try {
                 const response = await fetch('https://ziobunc-backend.onrender.com/api/bookings');
-                
-                if (!response.ok) {
-                    throw new Error('Server responded with error');
-                }
-                
                 const bookings = await response.json();
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('appointmentsTable').style.display = 'table';
                 
                 const tbody = document.getElementById('appointmentsBody');
                 tbody.innerHTML = '';
                 
-                if (bookings.length === 0) {
+                bookings.forEach(b => {
                     const row = tbody.insertRow();
-                    row.innerHTML = '<td colspan="6" style="text-align:center; color:#888;">No appointments yet. Check back later.</td>';
-                } else {
-                    bookings.forEach(b => {
-                        const row = tbody.insertRow();
-                        row.innerHTML = `
-                            <td>${b.fullName}</td>
-                            <td>${b.email}</td>
-                            <td>${b.phone}</td>
-                            <td>${b.doctor}</td>
-                            <td>${new Date(b.datetime).toLocaleString()}</td>
-                            <td>${b.type}</td>
-                        `;
-                    });
-                }
+                    row.innerHTML = `
+                        <td>${b.fullName}</td>
+                        <td>${b.email}</td>
+                        <td>${b.phone}</td>
+                        <td>${b.doctor}</td>
+                        <td>${new Date(b.datetime).toLocaleString()}</td>
+                        <td>${b.type}</td>
+                        <td>
+                            <a href="#" class="rx-btn" onclick="createPrescription('${b.fullName}', '${b.email}')">📄 Create Prescription</a>
+                        </td>
+                    `;
+                });
             } catch (err) {
                 console.error('Error loading bookings:', err);
-                document.getElementById('loading').innerHTML = '⚠️ Still connecting to the cloud database. This might take a moment...';
-                // Try again in 10 seconds
-                setTimeout(loadBookings, 10000);
+                document.getElementById('appointmentsBody').innerHTML = 
+                    '<tr><td colspan="7" style="text-align:center; color:red;">Failed to load appointments.</td></tr>';
             }
         }
         
-        // Start loading
+        function createPrescription(name, email) {
+            const med = prompt("Enter prescribed medication and dosage (e.g., Amoxicillin 500mg, 3x daily for 7 days):");
+            if (med) {
+                // Send to backend to generate PDF
+                fetch('https://ziobunc-backend.onrender.com/api/prescription', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ patientName: name, patientEmail: email, medication: med })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.url) {
+                        window.open(data.url, '_blank');
+                    } else {
+                        alert('Prescription generated and emailed to ' + email);
+                    }
+                })
+                .catch(err => alert('Error generating prescription.'));
+            }
+        }
+
         loadBookings();
     </script>
 </body>
