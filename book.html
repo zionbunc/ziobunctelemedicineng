@@ -8,7 +8,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: #f4f7fc; padding: 40px 20px; display: flex; justify-content: center; }
         .container { max-width: 600px; width: 100%; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h1 { color: #1a2b4c; margin-bottom: 20px; text-align: center; }
+        h1 { color: #1a2b4c; margin-bottom: 5px; text-align: center; }
+        .guest-badge { background: #28a745; color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; display: inline-block; margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
         input, select, button { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
         #submit-btn { background: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; }
@@ -25,8 +26,9 @@
     <div class="container">
         <div id="booking-form">
             <h1>Book a Consultation</h1>
-            
-            <!-- This form sends data directly to your live Render backend -->
+            <div style="text-align: center; margin-bottom: 15px;">
+                <span class="guest-badge">✅ No Account Needed</span>
+            </div>
             <form id="appointmentForm" action="https://ziobunc-backend.onrender.com/api/book" method="POST">
                 <label>Full Name</label>
                 <input type="text" name="fullName" id="fullName" placeholder="Enter your full name" required>
@@ -57,13 +59,13 @@
                 <button type="submit" id="submit-btn">Book Appointment</button>
             </form>
             <a href="index.html" class="back-link">← Back to Home</a>
-            <div class="admin-link"><a href="admin-login.html">🔒 Doctor Login</a></div>
+            <div class="admin-link"><a href="https://ziobunc-backend.onrender.com/dashboard">🔒 Admin Dashboard</a></div>
         </div>
 
         <div id="thank-you" class="hidden thank-you">
-            <h2>✅ Appointment Booked Successfully!</h2>
+            <h2>✅ Appointment Booked!</h2>
             <p>Your consultation has been scheduled. You will receive a confirmation shortly.</p>
-            <a href="index.html" class="back-link" style="margin-top: 30px;">← Go back to Home</a>
+            <a href="https://ziobunctelemedicineng.vercel.app" class="back-link" style="margin-top: 30px;">← Go back to Home</a>
         </div>
     </div>
 </body>
