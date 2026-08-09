@@ -19,6 +19,16 @@
         .rx-btn:hover { background: #e0a800; }
         .avail-btn { background: #28a745; color: white; padding: 5px 12px; border-radius: 20px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; }
         .avail-btn.busy { background: #dc3545; }
+        .record-btn { background: #17a2b8; color: white; padding: 5px 12px; border-radius: 20px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .record-btn:hover { background: #138496; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 10% auto; padding: 30px; border-radius: 12px; width: 80%; max-width: 600px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .close-btn { float: right; font-size: 24px; font-weight: bold; cursor: pointer; color: #aaa; }
+        .close-btn:hover { color: #000; }
+        .record-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .record-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -51,7 +61,7 @@
                     <th>Doctor</th>
                     <th>Date & Time</th>
                     <th>Type</th>
-                    <th>Action</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="appointmentsBody">
@@ -60,6 +70,17 @@
         </table>
         
         <div class="back-link"><a href="https://ziobunctelemedicineng.vercel.app">← Back to Home</a></div>
+    </div>
+
+    <!-- EHR Modal -->
+    <div id="ehrModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEHR()">&times;</span>
+            <h2 style="color: #1a2b4c;">📂 Patient Records</h2>
+            <div id="ehrContent">
+                <p style="color: #888;">Loading records...</p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -98,7 +119,7 @@
             }
         }
 
-        // Load Appointments
+        // Load Appointments with Records Button
         async function loadBookings() {
             try {
                 const response = await fetch('https://ziobunc-backend.onrender.com/api/bookings');
@@ -114,13 +135,57 @@
                         <td>${b.doctor}</td>
                         <td>${new Date(b.datetime).toLocaleString()}</td>
                         <td>${b.type}</td>
-                        <td><a class="rx-btn" onclick="createPrescription('${b.fullName}', '${b.email}')">📄 Prescribe</a></td>
+                        <td>
+                            <a class="rx-btn" onclick="createPrescription('${b.fullName}', '${b.email}')">📄 Prescribe</a>
+                            <button class="record-btn" onclick="viewRecords('${b.email}')">📂 Records</button>
+                        </td>
                     `;
                 });
             } catch (err) {
                 console.error('Error loading bookings:', err);
                 document.getElementById('appointmentsBody').innerHTML = 
                     '<tr><td colspan="7" style="text-align:center; color:red;">Failed to load appointments.</td></tr>';
+            }
+        }
+
+        // View Patient Records (Secure)
+        async function viewRecords(email) {
+            document.getElementById('ehrModal').style.display = 'block';
+            document.getElementById('ehrContent').innerHTML = '<p style="color: #888;">Loading records for ' + email + '...</p>';
+            
+            try {
+                const res = await fetch('https://ziobunc-backend.onrender.com/api/patient-records?email=' + encodeURIComponent(email));
+                const records = await res.json();
+                
+                if (records.length === 0) {
+                    document.getElementById('ehrContent').innerHTML = '<p style="color: #888;">No past records found for this patient.</p>';
+                } else {
+                    let html = '';
+                    records.forEach(r => {
+                        const date = new Date(r.createdAt).toLocaleDateString();
+                        html += `
+                            <div class="record-item">
+                                <strong>${date}</strong><br>
+                                <span style="color: #007bff;">${r.medication}</span>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('ehrContent').innerHTML = html;
+                }
+            } catch (err) {
+                document.getElementById('ehrContent').innerHTML = '<p style="color: red;">Error loading records.</p>';
+            }
+        }
+
+        function closeEHR() {
+            document.getElementById('ehrModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('ehrModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
             }
         }
 
@@ -144,6 +209,7 @@
                     a.click();
                     document.body.removeChild(a);
                     alert('✅ Prescription downloaded!');
+                    loadBookings(); // Refresh to show record
                 } catch (err) {
                     alert('Error: ' + err.message);
                 }

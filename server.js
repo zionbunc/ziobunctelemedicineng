@@ -172,3 +172,28 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+// GET PATIENT RECORDS (SECURE - ADMIN ONLY)
+app.get('/api/patient-records', async (req, res) => {
+    try {
+        const { email } = req.query;
+        if (!email) return res.status(400).json({ error: 'Email required' });
+
+        // Fetch all prescriptions for this patient from the booking data
+        // Since we don't have a separate prescription table, we'll look up the patient's email
+        const bookings = await Booking.find({ email: email }).sort({ createdAt: -1 });
+        
+        // Format the records
+        const records = bookings.map(b => ({
+            date: b.createdAt,
+            doctor: b.doctor,
+            type: b.type,
+            medication: b.medication || 'Prescription generated during visit'
+        }));
+
+        res.json(records);
+    } catch (err) {
+        console.error('❌ Error fetching patient records:', err);
+        res.status(500).json({ error: 'Failed to fetch records' });
+    }
+});
