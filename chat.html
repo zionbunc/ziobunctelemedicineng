@@ -40,18 +40,24 @@
         <a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Back to Home</a>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.min.js"></script>
     <script>
-        // Get room ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const roomId = urlParams.get('room');
         
         if (!roomId) {
             document.querySelector('.container').innerHTML = '<h1 style="color:red;">❌ Invalid Room</h1><p>Please use the link provided by your doctor.</p><a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Back to Home</a>';
         } else {
-            const socket = io('https://ziobunc-backend.onrender.com');
+            // Force Render to wake up and use the proxy
+            const socket = io('https://ziobunc-backend.onrender.com', {
+                transports: ['websocket', 'polling'],
+                secure: true
+            });
             
-            socket.emit('join-room', roomId);
+            socket.on('connect', () => {
+                document.getElementById('chatBox').innerHTML = '';
+                socket.emit('join-room', roomId);
+            });
             
             socket.on('user-joined', (msg) => {
                 addMessage('system', msg);
