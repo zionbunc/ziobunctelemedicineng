@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 const cors = require('cors');
+const crypto = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -34,7 +35,6 @@ const doctorSchema = new mongoose.Schema({
 });
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
-// UPDATED: Added medication field to store prescription text
 const bookingSchema = new mongoose.Schema({
     fullName: String,
     email: String,
@@ -42,7 +42,8 @@ const bookingSchema = new mongoose.Schema({
     doctor: String,
     datetime: String,
     type: String,
-    medication: { type: String, default: '' }, // <--- Store medication here
+    medication: { type: String, default: '' },
+    roomId: { type: String, unique: true, sparse: true },
     createdAt: { type: Date, default: Date.now }
 });
 const Booking = mongoose.model('Booking', bookingSchema);
@@ -109,12 +110,35 @@ app.post('/api/toggle-availability', async (req, res) => {
     }
 });
 
-// UPDATED: Save medication to the patient's booking record
+// GENERATE CONSULTATION ROOM LINK (FIXED VERSION)
+app.post('/api/generate-room', async (req, res) => {
+    try {
+        const { bookingId } = req.body;
+        if (!bookingId) {
+            return res.status(400).json({ error: 'Booking ID is required' });
+        }
+
+        const booking = await Booking.findById(bookingId);
+        if (!booking) {
+            return res.status(404).json({ error: 'Booking not found' });
+        }
+
+        // Generate a unique room ID
+        const roomId = crypto.randomBytes(5).toString('hex');
+        booking.roomId = roomId;
+        await booking.save();
+
+        const roomLink = `https://ziobunctelemedicineng.vercel.app/room.html?room=${roomId}`;
+        res.json({ success: true, roomLink: roomLink });
+    } catch (err) {
+        console.error('❌ Error generating room:', err);
+        res.status(500).json({ error: 'Failed to generate room' });
+    }
+});
+
 app.post('/api/prescription', async (req, res) => {
     try {
         const { patientName, patientEmail, medication } = req.body;
-
-        // Find the most recent booking for this patient and save the medication
         const booking = await Booking.findOne({ email: patientEmail }).sort({ createdAt: -1 });
         if (booking) {
             booking.medication = medication;
@@ -163,7 +187,6 @@ app.post('/api/prescription', async (req, res) => {
     }
 });
 
-// GET PATIENT RECORDS
 app.get('/api/patient-records', async (req, res) => {
     try {
         const { email } = req.query;
