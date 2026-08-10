@@ -10,7 +10,6 @@ const socketIo = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 
-// CORS SETUP FOR SOCKET.IO (THE FIX)
 const io = socketIo(server, {
     cors: {
         origin: ["https://ziobunctelemedicineng.vercel.app", "http://localhost:3000"],
@@ -27,7 +26,6 @@ app.use(cors({
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// CONNECT TO CLOUD MONGODB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://bunmait_db_user:udMUODyy3lrtQ5GQ@cluster0.ahwssg3.mongodb.net/ziobuncTelemedicine?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose.connect(MONGODB_URI, {
@@ -61,24 +59,6 @@ const bookingSchema = new mongoose.Schema({
 });
 const Booking = mongoose.model('Booking', bookingSchema);
 
-async function seedDoctors() {
-    try {
-        const count = await Doctor.countDocuments();
-        if (count === 0) {
-            await Doctor.create([
-                { name: 'Dr. Adewale', specialty: 'General', available: false },
-                { name: 'Dr. Chioma', specialty: 'Pediatrics', available: false },
-                { name: 'Dr. Emeka', specialty: 'Dermatology', available: true }
-            ]);
-            console.log('✅ Sample doctors added to cloud database');
-        }
-    } catch (err) {
-        console.error('❌ Error seeding doctors:', err);
-    }
-}
-seedDoctors();
-
-// AUTOMATED ROOM GENERATION
 app.post('/api/book', async (req, res) => {
     try {
         const { fullName, email, phone, doctor, datetime, type } = req.body;
@@ -197,7 +177,6 @@ app.get('/', (req, res) => {
     res.send('Ziobunc Backend is running on Cloud!');
 });
 
-// SOCKET.IO CONNECTION
 io.on('connection', (socket) => {
     console.log('🔗 A user connected to chat:', socket.id);
 
