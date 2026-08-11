@@ -32,12 +32,12 @@
                 <input type="email" name="email" id="email" placeholder="you@example.com" required>
                 <label>Phone Number</label>
                 <input type="tel" name="phone" id="phone" placeholder="080xxxxxxxx" required>
-                <label>Select Doctor</label>
-                <select name="doctor" id="doctor">
-                    <option>Dr. Adewale (General)</option>
-                    <option>Dr. Chioma (Pediatrics)</option>
-                    <option>Dr. Emeka (Dermatology)</option>
+                
+                <label>Select Professional</label>
+                <select name="doctor" id="doctorSelect" required>
+                    <option value="">-- Please select a professional --</option>
                 </select>
+
                 <label>Date & Time</label>
                 <input type="datetime-local" name="datetime" id="datetime" required>
                 <label>Consultation Type</label>
@@ -57,11 +57,31 @@
         </div>
     </div>
     <script>
+        // Load professionals dynamically from the database
+        async function loadProfessionals() {
+            try {
+                const res = await fetch('https://ziobunc-backend.onrender.com/api/doctors');
+                const doctors = await res.json();
+                const select = document.getElementById('doctorSelect');
+                select.innerHTML = '<option value="">-- Please select a professional --</option>';
+                doctors.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.name;
+                    opt.textContent = d.name + ' (' + d.specialty + ')';
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error('Failed to load professionals:', err);
+            }
+        }
+
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             document.getElementById('booking-form').classList.add('hidden');
             document.getElementById('thank-you').classList.remove('hidden');
         });
+
+        loadProfessionals();
     </script>
 </body>
 </html>
