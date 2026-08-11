@@ -116,3 +116,58 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => { console.log(`Server running on port ${PORT}`); });
+
+// DYNAMIC HOMEPAGE ROUTE (Bypasses Vercel cache)
+app.get('/professionals', async (req, res) => {
+    try {
+        const doctors = await Doctor.find();
+        let html = \`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trusted Clinical Insights (Public Health & Pharmacy)</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f9fafb; color: #111827; padding: 40px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; font-size: 32px; margin-bottom: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
+        .card h3 { margin: 0 0 8px 0; font-size: 18px; }
+        .card p { color: #6b7280; margin: 0; font-size: 14px; }
+        .status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 10px; }
+        .available { background: #dcfce7; color: #16a34a; }
+        .busy { background: #fee2e2; color: #dc2626; }
+        .back { text-align: center; margin-top: 40px; }
+        .back a { color: #2563eb; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Our Professionals</h1>
+        <div class="grid">\`;
+        
+        doctors.forEach(d => {
+            const statusClass = d.available ? 'available' : 'busy';
+            const statusText = d.available ? 'Available' : 'Busy';
+            html += \`
+                <div class="card">
+                    <h3>\${d.name}</h3>
+                    <p>\${d.specialty}</p>
+                    <span class="status \${statusClass}">\${statusText}</span>
+                </div>
+            \`;
+        });
+        
+        html += \`
+        </div>
+        <div class="back"><a href="/">← Back to Home</a></div>
+    </div>
+</body>
+</html>\`;
+        res.send(html);
+    } catch (err) {
+        res.status(500).send('Error loading professionals');
+    }
+});
