@@ -172,3 +172,12 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => { console.log(`Server running on port ${PORT}`); });
+
+// DELETE A PROFESSIONAL
+app.post('/api/delete-doctor', async (req, res) => {
+    try {
+        const { doctorId } = req.body;
+        await Doctor.findByIdAndDelete(doctorId);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: 'Failed to delete doctor' }); }
+});
