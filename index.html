@@ -6,25 +6,15 @@
     <title>Trusted Clinical Insights (Public Health & Pharmacy)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <style>
+        /* PERMANENT DARK MODE - NO TOGGLE */
         :root {
-            --bg: #f9fafb;
-            --text: #111827;
-            --muted: #6b7280;
-            --card: #ffffff;
-            --shadow: 0 8px 30px rgba(0,0,0,0.06);
-            --border: #e5e7eb;
-            --gold: #b8860b;
-            --gold-light: #fef3c7;
-            --footer: #0f172a;
-            --footer-text: #e2e8f0;
-        }
-        .dark {
             --bg: #0f172a;
             --text: #f1f5f9;
             --muted: #94a3b8;
             --card: #1e293b;
             --shadow: 0 8px 30px rgba(0,0,0,0.4);
             --border: #334155;
+            --gold: #b8860b;
             --gold-light: #2d1f00;
             --footer: #020617;
             --footer-text: #94a3b8;
@@ -39,7 +29,6 @@
         .logo { font-size: 22px; font-weight: 800; color: #2563eb; letter-spacing: -0.5px; }
         .btn-primary { background: #2563eb; color: #fff; padding: 10px 24px; border-radius: 60px; font-weight: 600; font-size: 14px; text-decoration: none; transition: 0.2s; }
         .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
-        .theme-toggle { background: transparent; border: 1px solid var(--border); padding: 6px 14px; border-radius: 30px; cursor: pointer; color: var(--text); font-size: 14px; }
 
         .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding: 80px 0 60px; }
         .hero-content h1 { font-size: clamp(36px, 5vw, 52px); font-weight: 800; line-height: 1.15; letter-spacing: -1px; color: var(--text); margin-bottom: 16px; }
@@ -102,8 +91,8 @@
         .prof-card h3 { font-size: 18px; margin-bottom: 6px; color: var(--text); }
         .prof-card p { color: var(--muted); font-size: 14px; }
         .prof-status { display: inline-block; padding: 4px 16px; border-radius: 30px; font-size: 12px; font-weight: 600; margin-top: 8px; }
-        .prof-status.available { background: #dcfce7; color: #16a34a; }
-        .prof-status.busy { background: #fee2e2; color: #dc2626; }
+        .prof-status.available { background: #1e3a2a; color: #4ade80; }
+        .prof-status.busy { background: #3a1e1e; color: #f87171; }
 
         @media (max-width: 768px) {
             .hero, .cap-grid { grid-template-columns: 1fr; gap: 30px; }
@@ -117,8 +106,7 @@
         <div class="container">
             <div class="logo">Ziobunc Telemedicine</div>
             <div>
-                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-                <a href="book.html" class="btn-primary" style="margin-left: 12px;">Book Now</a>
+                <a href="book.html" class="btn-primary">Book Now</a>
             </div>
         </div>
     </header>
@@ -196,19 +184,12 @@
             <p>&copy; 2026 Ziobunc Telemedicine. All rights reserved.</p>
             <div class="footer-support">
                 <strong>📞 Customer Service:</strong> <a href="tel:08068856864">08068856864</a> | <a href="tel:07068875355">07068875355</a><br>
-                <strong>📧 Support:</strong> <a href="mailto:bunmait@gmail.com">bunmait@gmail.com</a><br>
-                <strong>🔒 Staff Portal:</strong> <a href="https://ziobunc-backend.onrender.com/dashboard">Login</a>
+                <strong>📧 Support:</strong> <a href="mailto:bunmait@gmail.com">bunmait@gmail.com</a>
             </div>
         </div>
     </footer>
 
     <script>
-        function toggleTheme() {
-            document.body.classList.toggle('dark');
-            const btn = document.querySelector('.theme-toggle');
-            btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-        }
-
         function toggleFaq(el) {
             el.classList.toggle('active');
             el.querySelector('.faq-icon').textContent = el.classList.contains('active') ? '-' : '+';
