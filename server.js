@@ -12,7 +12,13 @@ const server = http.createServer(app);
 const io = socketIo(server, { cors: { origin: ["https://ziobunctelemedicineng.vercel.app", "http://localhost:3000"], methods: ["GET", "POST"] } });
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: ['https://ziobunctelemedicineng.vercel.app', 'http://localhost:3000'] }));
+// ALLOW YOUR FRONTEND TO FETCH DATA
+app.use(cors({ 
+    origin: ['https://ziobunctelemedicineng.vercel.app', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+}));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
