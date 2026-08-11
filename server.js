@@ -110,24 +110,15 @@ app.get('/api/patient-records', async (req, res) => {
 app.get('/dashboard', (req, res) => { res.sendFile(path.join(__dirname, 'dashboard.html')); });
 app.get('/', (req, res) => { res.send('Ziobunc Backend is running on Cloud!'); });
 
-io.on('connection', (socket) => {
-    socket.on('join-room', (roomId) => { socket.join(roomId); socket.to(roomId).emit('user-joined', 'A patient has joined the chat.'); });
-    socket.on('chat-message', (data) => { socket.to(data.room).emit('chat-message', { sender: data.sender, message: data.message, timestamp: new Date().toLocaleTimeString() }); });
-});
-
-server.listen(PORT, () => { console.log(`Server running on port ${PORT}`); });
-
-// DYNAMIC HOMEPAGE ROUTE (Bypasses Vercel cache)
 app.get('/professionals', async (req, res) => {
     try {
         const doctors = await Doctor.find();
-        let html = \`
-<!DOCTYPE html>
+        let html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trusted Clinical Insights (Public Health & Pharmacy)</title>
+    <title>Our Professionals</title>
     <style>
         body { font-family: 'Inter', sans-serif; background: #f9fafb; color: #111827; padding: 40px; }
         .container { max-width: 1200px; margin: 0 auto; }
@@ -146,28 +137,32 @@ app.get('/professionals', async (req, res) => {
 <body>
     <div class="container">
         <h1>Our Professionals</h1>
-        <div class="grid">\`;
-        
+        <div class="grid">`;
         doctors.forEach(d => {
             const statusClass = d.available ? 'available' : 'busy';
             const statusText = d.available ? 'Available' : 'Busy';
-            html += \`
+            html += `
                 <div class="card">
-                    <h3>\${d.name}</h3>
-                    <p>\${d.specialty}</p>
-                    <span class="status \${statusClass}">\${statusText}</span>
-                </div>
-            \`;
+                    <h3>${d.name}</h3>
+                    <p>${d.specialty}</p>
+                    <span class="status ${statusClass}">${statusText}</span>
+                </div>`;
         });
-        
-        html += \`
+        html += `
         </div>
         <div class="back"><a href="/">← Back to Home</a></div>
     </div>
 </body>
-</html>\`;
+</html>`;
         res.send(html);
     } catch (err) {
         res.status(500).send('Error loading professionals');
     }
 });
+
+io.on('connection', (socket) => {
+    socket.on('join-room', (roomId) => { socket.join(roomId); socket.to(roomId).emit('user-joined', 'A patient has joined the chat.'); });
+    socket.on('chat-message', (data) => { socket.to(data.room).emit('chat-message', { sender: data.sender, message: data.message, timestamp: new Date().toLocaleTimeString() }); });
+});
+
+server.listen(PORT, () => { console.log(`Server running on port ${PORT}`); });
