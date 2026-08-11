@@ -6,52 +6,39 @@
     <title>Consultation Room - Ziobunc Telemedicine</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f4f7fc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { max-width: 600px; width: 100%; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
-        h1 { color: #1a2b4c; margin-bottom: 10px; }
-        p { color: #555; margin-bottom: 30px; }
+        body { background: #121212; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; width: 100%; background: #1e1e1e; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); text-align: center; }
+        h1 { color: #ffffff; margin-bottom: 10px; }
+        p { color: #94a3b8; margin-bottom: 30px; }
         .options { display: grid; grid-template-columns: 1fr; gap: 15px; margin: 20px 0; }
-        .option-btn { background: #f8f9fa; border: 2px solid #eee; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; transition: 0.3s; font-weight: bold; display: block; }
-        .option-btn:hover { border-color: #007bff; background: #e7f3ff; transform: translateY(-2px); }
+        .option-btn { background: #2a2a2a; border: 2px solid #444; padding: 20px; border-radius: 12px; text-decoration: none; color: #e0e0e0; transition: 0.3s; font-weight: bold; display: block; }
+        .option-btn:hover { border-color: #2563eb; background: #1a2a3a; transform: translateY(-2px); }
         .option-btn span { font-size: 24px; display: block; margin-bottom: 5px; }
-        .back-link { display: block; margin-top: 20px; color: #007bff; text-decoration: none; }
+        .back-link { display: block; margin-top: 20px; color: #60a5fa; text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🩺 Consultation Room</h1>
         <p>Please choose how you would like to connect with your doctor.</p>
-        
         <div class="options">
-            <a href="#" id="videoLink" class="option-btn">
-                <span>📹</span> Start Video Call
-            </a>
-            <a href="#" id="audioLink" class="option-btn">
-                <span>🎙️</span> Start Audio Call
-            </a>
-            <a href="#" id="chatLink" class="option-btn">
-                <span>💬</span> Start Text Chat
-            </a>
+            <a href="#" id="videoLink" class="option-btn"><span>📹</span> Start Video Call</a>
+            <a href="#" id="audioLink" class="option-btn"><span>🎙️</span> Start Audio Call</a>
+            <a href="#" id="chatLink" class="option-btn"><span>💬</span> Start Text Chat</a>
         </div>
-        
         <a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Back to Home</a>
     </div>
-
     <script>
-        // Get the room ID from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const roomId = urlParams.get('room');
-
         if (roomId) {
-            // Build the Jitsi link with the room ID
             const baseUrl = 'https://meet.jit.si/';
             const roomName = 'Ziobunc_' + roomId;
-            
             document.getElementById('videoLink').href = baseUrl + roomName;
             document.getElementById('audioLink').href = baseUrl + roomName + '#config.startWithVideoMuted=true';
             document.getElementById('chatLink').href = 'https://ziobunctelemedicineng.vercel.app/chat.html?room=' + roomId;
         } else {
-            document.querySelector('.container').innerHTML = '<h1 style="color:red;">❌ Invalid Room</h1><p>Please use the link provided by your doctor.</p><a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Back to Home</a>';
+            document.querySelector('.container').innerHTML = '<h1 style="color:#f87171;">❌ Invalid Room</h1><p>Please use the link provided by your doctor.</p><a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Back to Home</a>';
         }
     </script>
 </body>

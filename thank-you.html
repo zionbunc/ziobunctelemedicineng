@@ -6,43 +6,28 @@
     <title>Appointment Booked - Ziobunc Telemedicine</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f4f7fc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { max-width: 600px; width: 100%; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+        body { background: #121212; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; width: 100%; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); text-align: center; }
         .icon { font-size: 60px; color: #28a745; margin-bottom: 10px; }
         h1 { color: #28a745; margin-bottom: 10px; }
-        p { color: #555; margin-bottom: 20px; }
-        
+        p { color: #e0e0e0; margin-bottom: 20px; }
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .action-btn { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; border: 2px solid #eee;
-            transition: 0.3s; color: #333; background: #f9f9f9;
-        }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; border: 2px solid #444; transition: 0.3s; color: #e0e0e0; background: #2a2a2a; }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .action-btn.email { border-color: #007bff; }
-        .action-btn.email:hover { background: #e7f3ff; }
+        .action-btn.email:hover { background: #1a2a3a; }
         .action-btn.whatsapp { border-color: #25D366; }
-        .action-btn.whatsapp:hover { background: #e5f9ee; }
-        
+        .action-btn.whatsapp:hover { background: #1a2a1a; }
         .video-btn { display: inline-block; background: #007bff; color: white; padding: 12px 24px; border-radius: 30px; text-decoration: none; margin-top: 10px; font-weight: bold; }
         .video-btn:hover { background: #0056b3; }
-        
-        .support-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
+        .support-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid #444; }
         .upload-btn { background: #ffc107; color: #1a2b4c; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 15px; }
         .support-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .support-item { background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 14px; }
-        .support-item strong { display: block; color: #333; }
+        .support-item { background: #2a2a2a; padding: 10px; border-radius: 8px; font-size: 14px; }
+        .support-item strong { display: block; color: #e0e0e0; }
         a { color: #007bff; text-decoration: none; }
         .back-link { display: block; margin-top: 20px; }
-
-        /* Payment Section */
-        .payment-section { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; border: 1px solid #90caf9; }
-        .pay-btn { background: #25D366; color: white; padding: 12px 24px; border: none; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
-        .pay-btn:hover { background: #1da851; }
-
-        @media (max-width: 500px) {
-            .action-grid, .support-grid { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 500px) { .action-grid, .support-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -50,52 +35,31 @@
         <div class="icon">✅</div>
         <h1>Appointment Booked!</h1>
         <p>Your consultation has been scheduled. A confirmation has been sent to the admin.</p>
-        
-        <div style="background: #e8f5e9; padding: 10px; border-radius: 8px; margin-bottom: 15px; color: #2e7d32; font-size: 14px;">
+        <div style="background: #1a2a1a; padding: 10px; border-radius: 8px; margin-bottom: 15px; color: #4ade80; font-size: 14px; border: 1px solid #2a4a2a;">
             🧑‍⚕️ <strong>Free Pharmacist Follow-up Included!</strong><br>
             A pharmacist will review your prescription and reach out to you shortly.
         </div>
-
-        <!-- Payment Section -->
-        <div class="payment-section">
-            <p style="font-weight: bold; color: #0d47a1;">💳 Complete Your Booking</p>
-            <p style="font-size: 14px; color: #555; margin-bottom: 15px;">
-                To confirm your appointment, please complete your payment via WhatsApp.
-            </p>
-            <a href="https://wa.me/2348068856864?text=Hello%20Admin,%20I%20have%20booked%20a%20consultation%20with%20Ziobunc%20Telemedicine.%20Please%20send%20me%20the%20payment%20details%20so%20I%20can%20complete%20my%20booking." class="pay-btn" target="_blank">
-                💬 Pay via WhatsApp
-            </a>
+        <div style="background: #1a2a3a; padding: 15px; border-radius: 8px; border: 1px solid #2a4a6a; margin-bottom: 20px;">
+            <p style="font-weight: bold; color: #60a5fa;">💳 Complete Your Booking</p>
+            <p style="font-size: 14px; color: #e0e0e0; margin-bottom: 15px;">To confirm your appointment, please complete your payment via WhatsApp.</p>
+            <a href="https://wa.me/2348068856864?text=Hello%20Admin,%20I%20have%20booked%20a%20consultation%20with%20Ziobunc%20Telemedicine.%20Please%20send%20me%20the%20payment%20details%20so%20I%20can%20complete%20my%20booking." class="pay-btn" style="background:#25D366;color:#fff;padding:12px 24px;border:none;border-radius:30px;font-size:16px;font-weight:bold;text-decoration:none;display:inline-block;">💬 Pay via WhatsApp</a>
         </div>
-
-        <p style="font-size: 14px; color: #888; margin-top: 15px;">Please confirm your booking by sending a notification below.</p>
-
+        <p style="font-size: 14px; color: #888;">Please confirm your booking by sending a notification below.</p>
         <div class="action-grid">
             <a href="mailto:ziobuncenterprise@gmail.com?subject=Ziobunc%20Appointment%20Confirmation&body=Hello%20Admin,%0A%0AMy%20name%20is%20[Your%20Name]%20and%20I%20have%20booked%20a%20consultation.%0A%0APlease%20confirm%20my%20appointment.%0A%0AThank%20you." class="action-btn email">
-                <span style="font-size: 24px;">📧</span>
-                Email Admin
+                <span style="font-size: 24px;">📧</span> Email Admin
             </a>
             <a href="https://wa.me/2348068856864?text=Hello%20Admin,%20I%20have%20booked%20a%20consultation%20with%20Ziobunc%20Telemedicine.%20Please%20confirm%20my%20appointment." class="action-btn whatsapp">
-                <span style="font-size: 24px;">💬</span>
-                WhatsApp Admin
+                <span style="font-size: 24px;">💬</span> WhatsApp Admin
             </a>
         </div>
-
         <div class="support-section">
             <a href="mailto:bunmait@gmail.com?subject=Prescription%20Upload%20for%20Ziobunc%20Telemedicine&body=Hello%20Support,%0A%0APlease%20find%20my%20prescription%20attached%20to%20this%20email.%0A%0AMy%20Name:%20[Enter%20Your%20Name]%0AMy%20Phone:%20[Enter%20Your%20Phone]%0A%0AThank%20you." class="upload-btn">📸 Upload Prescription (via Email)</a>
-            
             <div class="support-grid">
-                <div class="support-item">
-                    <strong>📞 Customer Service</strong>
-                    <a href="tel:08068856864">08068856864</a><br>
-                    <a href="tel:07068875355">07068875355</a>
-                </div>
-                <div class="support-item">
-                    <strong>📧 Support Email</strong>
-                    <a href="mailto:bunmait@gmail.com">bunmait@gmail.com</a>
-                </div>
+                <div class="support-item"><strong>📞 Customer Service</strong><a href="tel:08068856864">08068856864</a><br><a href="tel:07068875355">07068875355</a></div>
+                <div class="support-item"><strong>📧 Support Email</strong><a href="mailto:bunmait@gmail.com">bunmait@gmail.com</a></div>
             </div>
         </div>
-
         <p style="font-size: 14px; color: #888; margin-top: 20px;">When it's time for your appointment, click below to join your doctor.</p>
         <a href="video-call.html" class="video-btn">📹 Join Video Call</a>
         <a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Return to Home</a>

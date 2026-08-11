@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book a Doctor - Ziobunc Telemedicine</title>
+    <title>Book a Consultation - Ziobunc Telemedicine</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f4f7fc; padding: 40px 20px; display: flex; justify-content: center; }
-        .container { max-width: 600px; width: 100%; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h1 { color: #1a2b4c; margin-bottom: 5px; text-align: center; }
-        .guest-badge { background: #28a745; color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; display: inline-block; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
-        input, select, button { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
-        #submit-btn { background: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; }
-        #submit-btn:hover { background: #218838; }
+        body { background: #121212; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; width: 100%; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        h1 { color: #ffffff; margin-bottom: 20px; text-align: center; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #e0e0e0; }
+        input, select, button { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #444; border-radius: 6px; font-size: 16px; background: #2a2a2a; color: #e0e0e0; }
+        button { background: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { background: #218838; }
         .back-link { display: block; text-align: center; margin-top: 15px; color: #007bff; text-decoration: none; }
         .hidden { display: none; }
         .thank-you { text-align: center; padding: 20px 0; }
@@ -26,47 +25,43 @@
     <div class="container">
         <div id="booking-form">
             <h1>Book a Consultation</h1>
-            <div style="text-align: center; margin-bottom: 15px;">
-                <span class="guest-badge">✅ No Account Needed</span>
-            </div>
             <form id="appointmentForm" action="https://ziobunc-backend.onrender.com/api/book" method="POST">
                 <label>Full Name</label>
                 <input type="text" name="fullName" id="fullName" placeholder="Enter your full name" required>
-
                 <label>Email Address</label>
                 <input type="email" name="email" id="email" placeholder="you@example.com" required>
-
                 <label>Phone Number</label>
                 <input type="tel" name="phone" id="phone" placeholder="080xxxxxxxx" required>
-
                 <label>Select Doctor</label>
                 <select name="doctor" id="doctor">
                     <option>Dr. Adewale (General)</option>
                     <option>Dr. Chioma (Pediatrics)</option>
                     <option>Dr. Emeka (Dermatology)</option>
                 </select>
-
                 <label>Date & Time</label>
                 <input type="datetime-local" name="datetime" id="datetime" required>
-
                 <label>Consultation Type</label>
                 <select name="type" id="type">
                     <option>Video Call</option>
                     <option>Audio Call</option>
                     <option>Text Chat</option>
                 </select>
-
                 <button type="submit" id="submit-btn">Book Appointment</button>
             </form>
-            <a href="index.html" class="back-link">← Back to Home</a>
-            <div class="admin-link"><a href="https://ziobunc-backend.onrender.com/dashboard">🔒 Admin Dashboard</a></div>
+            <a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Back to Home</a>
         </div>
-
         <div id="thank-you" class="hidden thank-you">
             <h2>✅ Appointment Booked!</h2>
             <p>Your consultation has been scheduled. You will receive a confirmation shortly.</p>
             <a href="https://ziobunctelemedicineng.vercel.app" class="back-link" style="margin-top: 30px;">← Go back to Home</a>
         </div>
     </div>
+    <script>
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('booking-form').classList.add('hidden');
+            document.getElementById('thank-you').classList.remove('hidden');
+        });
+    </script>
 </body>
 </html>
