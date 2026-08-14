@@ -36,14 +36,17 @@
         <h1>Appointment Booked!</h1>
         <p>Your consultation has been scheduled. A confirmation has been sent to the admin.</p>
         <div style="background: #1a2a1a; padding: 10px; border-radius: 8px; margin-bottom: 15px; color: #4ade80; font-size: 14px; border: 1px solid #2a4a2a;">
-            🧑‍⚕️ <strong>Free Pharmacist Follow-up Included!</strong><br>
-            A pharmacist will review your prescription and reach out to you shortly.
+            🧑‍⚕️ <strong>Free Professional Follow-up Included!</strong><br>
+            A professional will review your prescription and reach out to you shortly.
         </div>
+        
+        <!-- PAYMENT SECTION (Paystack) -->
         <div style="background: #1a2a3a; padding: 15px; border-radius: 8px; border: 1px solid #2a4a6a; margin-bottom: 20px;">
             <p style="font-weight: bold; color: #60a5fa;">💳 Complete Your Booking</p>
-            <p style="font-size: 14px; color: #e0e0e0; margin-bottom: 15px;">To confirm your appointment, please complete your payment via WhatsApp.</p>
-            <a href="https://wa.me/2348068856864?text=Hello%20Admin,%20I%20have%20booked%20a%20consultation%20with%20Ziobunc%20Telemedicine.%20Please%20send%20me%20the%20payment%20details%20so%20I%20can%20complete%20my%20booking." class="pay-btn" style="background:#25D366;color:#fff;padding:12px 24px;border:none;border-radius:30px;font-size:16px;font-weight:bold;text-decoration:none;display:inline-block;">💬 Pay via WhatsApp</a>
+            <p style="font-size: 14px; color: #e0e0e0; margin-bottom: 15px;">Click below to pay securely via Paystack.</p>
+            <button onclick="payWithPaystack()" style="background:#2563eb;color:#fff;padding:12px 24px;border:none;border-radius:30px;font-size:16px;font-weight:bold;cursor:pointer;">💳 Pay Now</button>
         </div>
+
         <p style="font-size: 14px; color: #888;">Please confirm your booking by sending a notification below.</p>
         <div class="action-grid">
             <a href="mailto:ziobuncenterprise@gmail.com?subject=Ziobunc%20Appointment%20Confirmation&body=Hello%20Admin,%0A%0AMy%20name%20is%20[Your%20Name]%20and%20I%20have%20booked%20a%20consultation.%0A%0APlease%20confirm%20my%20appointment.%0A%0AThank%20you." class="action-btn email">
@@ -64,5 +67,30 @@
         <a href="video-call.html" class="video-btn">📹 Join Video Call</a>
         <a href="https://ziobunctelemedicineng.vercel.app" class="back-link">← Return to Home</a>
     </div>
+
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script>
+        function payWithPaystack() {
+            const publicKey = 'pk_live_d5f38f98abfe7950e8711944240599a88f57fac1';
+            const email = 'bunmait@gmail.com';
+            const amount = 10000; // ₦10,000 in kobo
+            
+            const handler = PaystackPop.setup({
+                key: publicKey,
+                email: email,
+                amount: amount,
+                currency: 'NGN',
+                ref: 'ZIO-' + Math.floor((Math.random() * 1000000000) + 1),
+                callback: function(response) {
+                    alert('✅ Payment successful! Transaction ref: ' + response.reference);
+                    window.location.href = 'video-call.html';
+                },
+                onClose: function() {
+                    alert('❌ Payment window closed. Please complete payment to confirm your booking.');
+                }
+            });
+            handler.openIframe();
+        }
+    </script>
 </body>
 </html>
